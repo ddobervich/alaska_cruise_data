@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alaska Cruise Ship Reports – 2027</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f0f4f8;
+    color: #1a1a2e;
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ---- Sidebar nav ---- */
+  #sidenav {
+    width: 210px;
+    flex-shrink: 0;
+    background: #0d3b66;
+    color: white;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 20px 0 20px 0;
+    display: flex;
+    flex-direction: column;
+  }
+  #sidenav .nav-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #90bde0;
+    padding: 0 16px;
+    margin-bottom: 6px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  #sidenav .back-link {
+    display: block;
+    padding: 8px 16px;
+    color: #b8d4f0;
+    text-decoration: none;
+    font-size: 0.8rem;
+    border-left: 3px solid transparent;
+    margin-bottom: 10px;
+  }
+  #sidenav .back-link:hover { color: white; background: rgba(255,255,255,0.07); }
+  #sidenav .line-group { margin-bottom: 8px; }
+  #sidenav .line-header {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #90bde0;
+    padding: 6px 16px 3px;
+  }
+  #sidenav a.ship-link {
+    display: block;
+    padding: 6px 16px;
+    color: #cde0f5;
+    text-decoration: none;
+    font-size: 0.82rem;
+    border-left: 3px solid transparent;
+    transition: all 0.1s;
+    line-height: 1.3;
+  }
+  #sidenav a.ship-link:hover,
+  #sidenav a.ship-link.active {
+    color: white;
+    background: rgba(255,255,255,0.1);
+    border-left-color: #5da8e8;
+  }
+
+  /* ---- Main content ---- */
+  #main {
+    flex: 1;
+    padding: 28px 32px;
+    max-width: 960px;
+  }
+  h1 { font-size: 1.5rem; color: #0d3b66; margin-bottom: 4px; }
+  .page-subtitle { color: #555; font-size: 0.88rem; margin-bottom: 24px; }
+
+  /* ---- Ship cards ---- */
+  .ship-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    margin-bottom: 36px;
+    overflow: hidden;
+  }
+  .ship-header {
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .ship-header h2 { font-size: 1.25rem; color: #0d3b66; }
+  .ship-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+  .badge-princess { background: #e3eaf8; color: #003087; }
+  .badge-rc { background: #e0f0fa; color: #0073b6; }
+  .badge-disney { background: #e0ecfb; color: #0066b3; }
+  .header-princess { border-left: 5px solid #003087; background: linear-gradient(135deg, #f7f9ff 0%, white 60%); }
+  .header-rc { border-left: 5px solid #0073b6; background: linear-gradient(135deg, #f0f8ff 0%, white 60%); }
+  .header-disney { border-left: 5px solid #0066b3; background: linear-gradient(135deg, #f0f5ff 0%, white 60%); }
+  .ship-specs {
+    font-size: 0.8rem;
+    color: #666;
+    margin-left: auto;
+    text-align: right;
+    line-height: 1.5;
+  }
+  .search-link {
+    font-size: 0.78rem;
+    color: #0d3b66;
+    text-decoration: none;
+    border-bottom: 1px solid #aac;
+    white-space: nowrap;
+  }
+  .search-link:hover { color: #1565c0; }
+
+  /* ---- Question table ---- */
+  .ship-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.84rem;
+  }
+  .ship-table tr.section-header td {
+    background: #f0f4f8;
+    color: #0d3b66;
+    font-weight: 700;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 8px 20px;
+    border-top: 1px solid #e0e8f0;
+    border-bottom: 1px solid #e0e8f0;
+  }
+  .ship-table tr.data-row td {
+    padding: 10px 20px;
+    border-bottom: 1px solid #f0f2f5;
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  .ship-table tr.data-row:last-child td { border-bottom: none; }
+  .ship-table tr.data-row:hover td { background: #f8faff; }
+  .ship-table td.question {
+    font-weight: 600;
+    color: #333;
+    width: 28%;
+    white-space: nowrap;
+    padding-right: 16px;
+  }
+  .ship-table td.answer { color: #444; }
+  .ship-table td.answer em { color: #777; font-style: italic; }
+
+  /* status icons */
+  .yes { color: #2e7d32; font-weight: 700; }
+  .no { color: #c62828; font-weight: 700; }
+  .partial { color: #e65100; font-weight: 700; }
+  .unknown { color: #888; font-style: italic; }
+
+  /* tip box */
+  .tip-box {
+    background: #fff8e1;
+    border-left: 3px solid #f9a825;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin-top: 4px;
+    font-size: 0.8rem;
+    color: #5d4037;
+    line-height: 1.5;
+  }
+
+  /* note */
+  .note-disclaimer {
+    background: #e8eaf6;
+    border-left: 3px solid #5c6bc0;
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: #333;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+
+  /* ---- Comparison table ---- */
+  #compare {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    margin-bottom: 36px;
+    overflow: hidden;
+  }
+  #compare h2 {
+    font-size: 1.1rem;
+    color: #0d3b66;
+    padding: 16px 20px 10px;
+    border-bottom: 2px solid #e0e8f0;
+  }
+  .compare-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .compare-table {
+    border-collapse: collapse;
+    font-size: 0.76rem;
+    min-width: 1600px;
+    width: 100%;
+  }
+  .compare-table th {
+    background: #0d3b66;
+    color: white;
+    padding: 9px 10px;
+    text-align: left;
+    font-weight: 600;
+    white-space: nowrap;
+    vertical-align: bottom;
+    line-height: 1.3;
+    border-right: 1px solid #1a5276;
+  }
+  .compare-table th:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 3;
+    background: #0a2d52;
+    min-width: 130px;
+  }
+  .compare-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #eef0f3;
+    border-right: 1px solid #f0f2f5;
+    vertical-align: top;
+    line-height: 1.4;
+    min-width: 120px;
+  }
+  .compare-table td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    font-weight: 700;
+    font-size: 0.78rem;
+    white-space: nowrap;
+    border-right: 2px solid #dde;
+  }
+  .compare-table tr:last-child td { border-bottom: none; }
+  /* Line color bands on sticky col */
+  .cmp-princess td:first-child { background: #f0f4fc; border-left: 4px solid #003087; }
+  .cmp-rc td:first-child       { background: #f0f7fc; border-left: 4px solid #0073b6; }
+  .cmp-disney td:first-child   { background: #f0f4fc; border-left: 4px solid #0066b3; }
+  .cmp-princess td { background: #fafbff; }
+  .cmp-rc td       { background: #f8fbff; }
+  .cmp-disney td   { background: #f8f9ff; }
+  .cmp-princess td:first-child,
+  .cmp-rc td:first-child,
+  .cmp-disney td:first-child { color: #0d3b66; }
+  .compare-table tr:hover td { filter: brightness(0.97); }
+  .compare-table .col-group-header td {
+    background: #f0f4f8;
+    color: #0d3b66;
+    font-weight: 700;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 5px 10px;
+    border-bottom: 1px solid #d8e0ea;
+  }
+  .compare-table .col-group-header td:first-child {
+    background: #e8edf5;
+  }
+  .compare-link {
+    display: inline-block;
+    font-size: 0.75rem;
+    color: #1565c0;
+    text-decoration: none;
+    border-bottom: 1px dashed #1565c0;
+    margin-left: 10px;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+  .compare-link:hover { color: #0d3b66; }
+
+  @media (max-width: 768px) {
+    body { flex-direction: column; }
+    #sidenav { width: 100%; height: auto; position: static; flex-direction: row; flex-wrap: wrap; padding: 8px; }
+    #sidenav a.ship-link { padding: 4px 10px; font-size: 0.75rem; }
+    #main { padding: 16px; }
+    .ship-table td.question { width: 35%; white-space: normal; font-size: 0.78rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Sidebar Navigation -->
+<nav id="sidenav">
+  <div class="nav-title">Alaska 2027</div>
+  <a class="back-link" href="alaska-cruises-2027.html">← Back to Cruise Table</a>
+  <a class="ship-link" href="#compare" style="font-weight:700; color:#f0a500; margin-bottom:6px;">⚖️ Compare All Ships</a>
+
+  <div class="line-group">
+    <div class="line-header">Princess Cruises</div>
+    <a class="ship-link" href="#discovery-princess">Discovery Princess</a>
+    <a class="ship-link" href="#royal-princess">Royal Princess</a>
+    <a class="ship-link" href="#star-princess">Star Princess</a>
+  </div>
+  <div class="line-group">
+    <div class="line-header">Royal Caribbean</div>
+    <a class="ship-link" href="#quantum-of-the-seas">Quantum of the Seas</a>
+    <a class="ship-link" href="#serenade-of-the-seas">Serenade of the Seas</a>
+    <a class="ship-link" href="#voyager-of-the-seas">Voyager of the Seas</a>
+  </div>
+  <div class="line-group">
+    <div class="line-header">Disney Cruise Line</div>
+    <a class="ship-link" href="#disney-magic">Disney Magic</a>
+    <a class="ship-link" href="#disney-wonder">Disney Wonder</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div id="main">
+  <h1>🚢 Alaska Cruise Ship Reports — 2027</h1>
+  <p class="page-subtitle">Research on each ship sailing Alaska Jul–Aug 2027 &nbsp;·&nbsp; Princess · Royal Caribbean · Disney Cruise Line</p>
+
+  <div class="note-disclaimer">
+    <strong>Research notes:</strong> General specs are from official/aggregator sites. Forum opinions are aggregated from Cruise Critic, TripAdvisor, DISboards, and cruise review blogs. Hours and activities can change sailing-to-sailing — always verify on board. Items marked <span class="unknown">unknown</span> couldn't be confirmed from available sources. Disney's kids club uses "Inside Stateroom" terminology ("Inside" = Interior; "Veranda" = Balcony).
+  </div>
+
+  <!-- ================================================ -->
+  <!-- COMPARISON TABLE                                 -->
+  <!-- ================================================ -->
+  <div class="ship-card" id="compare">
+    <h2>⚖️ Compare All Ships</h2>
+    <div class="compare-scroll">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Ship</th>
+            <th>Decks / Guests</th>
+            <th>Pool in Alaska?</th>
+            <th>Kids Roam Freely?</th>
+            <th>Kids Club<br>Self-Checkout Age</th>
+            <th>Ice Cream<br>(Self-Serve Hours)</th>
+            <th>Pizza / Late Snacks<br>(Self-Serve Hours)</th>
+            <th>Self-Serve<br>Breakfast Buffet?</th>
+            <th>Kids Pool<br>+ Pool Movies?</th>
+            <th>Key Kids Activities</th>
+            <th>Dinner Seatings</th>
+            <th>Evening Entertainment</th>
+            <th>Stateroom Notes</th>
+            <th>Vibe w/ Young Kids</th>
+          </tr>
+        </thead>
+        <tbody>
+
+          <!-- PRINCESS -->
+          <tr class="cmp-princess">
+            <td>Discovery Princess</td>
+            <td>19 decks (15 accessible)<br>~3,660 guests</td>
+            <td>⚠️ Hot tubs heated; main pools not confirmed heated. Covered Retreat Pool (adults). Solarium adults only.</td>
+            <td>✅ Yes, ship is designed for families</td>
+            <td>Lodge (8–12) self-checkout ✅<br>Tree House (3–7) parent required</td>
+            <td>Soft serve ~11am–10pm (pool deck)</td>
+            <td>Pizza pool deck ~late morning–midnight</td>
+            <td>✅ Horizon Court buffet 5am–11pm</td>
+            <td>Main pool family-friendly; FunZone splash zone. Movies at pool (Movies Under the Stars).</td>
+            <td>Camp Discovery crafts/games; Princess Live! trivia; North Star obs. capsule; pool games; Sea Walk glass walkway</td>
+            <td>Traditional Early ~5pm / Late ~7:15pm, or Anytime 5:30–10pm (app)</td>
+            <td>Live orchestra production shows; Deadliest Catch captains Q&A; Puppies in the Piazza (husky history); North to Alaska show; Candlelight Concert; Native Alaskan storytellers</td>
+            <td>Newer ship (2022); generally positive. Some note balcony furniture basic; suite perks popular. Smaller interior cabins ~160 sq ft.</td>
+            <td>Family-friendly; popular with all ages. Newer ship so well-maintained. Kids will enjoy SeaWalk and North Star.</td>
+          </tr>
+
+          <tr class="cmp-princess">
+            <td>Royal Princess</td>
+            <td>19 decks (15 accessible)<br>~3,560 guests</td>
+            <td>⚠️ Hot tubs heated; only 2 pools (no covered option). Cold in Alaska.</td>
+            <td>✅ Yes</td>
+            <td>Lodge (8–12) self-checkout ✅<br>Tree House (3–7) parent required</td>
+            <td>Soft serve ~11am–10pm</td>
+            <td>Pizza pool deck ~late morning–midnight</td>
+            <td>✅ Horizon Court buffet 5am–11pm</td>
+            <td>Main pool; Movies Under the Stars. No dedicated splash zone.</td>
+            <td>Camp Discovery; trivia; Sea Walk glass walkway; North Star obs. capsule; pool games</td>
+            <td>Traditional Early ~5pm / Late ~7:15pm, or Anytime 5:30–10pm</td>
+            <td>Live orchestra production shows; Deadliest Catch Q&A; Puppies in the Piazza; North to Alaska; Candlelight Concert; Native storytellers</td>
+            <td>2013 ship; generally well-regarded. Some criticism of limited pool space; Piazza atrium loved. Balconies on the small side.</td>
+            <td>Family-friendly but older ship. SeaWalk popular. Kids enjoy Piazza activities. Pool may be too cold for Alaska.</td>
+          </tr>
+
+          <tr class="cmp-princess">
+            <td>Star Princess</td>
+            <td>21 decks<br>~4,320 guests (max 5,189)</td>
+            <td>✅ The Dome (indoor/outdoor, adults only); main pools; large ship has more options</td>
+            <td>✅ Yes</td>
+            <td>Lodge (8–12) self-checkout ✅<br>Tree House (3–7) parent required</td>
+            <td>Soft serve ~11am–10pm</td>
+            <td>Pizza pool deck ~late morning–midnight</td>
+            <td>✅ Horizon Court buffet 5am–11pm</td>
+            <td>Main pools; Movies Under the Stars; dedicated splash zone</td>
+            <td>Camp Discovery; more onboard venues (newest ship); Princess Live!; pool games; North Star; Sea Walk</td>
+            <td>Traditional Early ~5pm / Late ~7:15pm, or Anytime 5:30–10pm</td>
+            <td>Live orchestra shows; Deadliest Catch Q&A; Puppies in the Piazza; North to Alaska; Candlelight Concert; Native storytellers. Largest Princess ship — most entertainment variety.</td>
+            <td>Brand new 2025 — very fresh. Larger ship means more walkable, more venues. Some note crowds on sea days. Storage and balcony size better than older ships.</td>
+            <td>Best Princess option for families. Newest amenities, most activities. More crowded but most variety.</td>
+          </tr>
+
+          <!-- ROYAL CARIBBEAN -->
+          <tr class="cmp-rc">
+            <td>Quantum of the Seas</td>
+            <td>18 decks (16 guest)<br>~4,160 guests</td>
+            <td>✅ Covered Solarium w/ retractable roof — warm even in Alaska (adults only). Main pool outdoors.</td>
+            <td>✅ Yes; large open decks</td>
+            <td>Voyagers (9–12) self-checkout from 9am ✅<br>Aquanauts (3–5) / Explorers (6–8): parent required</td>
+            <td>Sprinkles soft serve until ~10pm</td>
+            <td>Windjammer 6:30am–9pm; Café Two70 for snacks; no 24hr pizza on this ship</td>
+            <td>✅ Windjammer buffet 6:30am–9pm</td>
+            <td>Main pool; no splash pad but FlowRider surf simulator. No pool movie confirmed.</td>
+            <td>Adventure Ocean; iRobot builds; RipCord by iFLY skydiving sim; NorthStar capsule; FlowRider; rock climbing; bumper cars; roller skating; circus school (SeaPlex)</td>
+            <td>Traditional 5pm / 7:30pm, or My Time Dining</td>
+            <td>Starwater, Sonic Odyssey, Sequins &amp; Feathers (original shows — not Broadway); Music Hall cover bands nightly; DJ nights</td>
+            <td>2014 but well-maintained after refurb. Generally positive: loved SeaPlex and Two70 venue. Some note dining room service inconsistent. Cabins standard size.</td>
+            <td>Best for adventurous kids (8+). iFLY, FlowRider, bumper cars huge hits. Less "little kid" than Disney. Solarium great for parents. Busy/energetic atmosphere.</td>
+          </tr>
+
+          <tr class="cmp-rc">
+            <td>Serenade of the Seas</td>
+            <td>12 decks<br>~2,143 guests</td>
+            <td>❌ Main pool NOT heated — cold in Alaska. Solarium (adults only 18+) heated but restricted.</td>
+            <td>✅ Yes; smaller ship easier to navigate</td>
+            <td>Voyagers (9–12) self-checkout from 9am ✅<br>Younger: parent required</td>
+            <td>Sprinkles soft serve until ~10pm</td>
+            <td>Windjammer 6:30am–9pm; no 24hr pizza</td>
+            <td>✅ Windjammer buffet 6:30am–9pm</td>
+            <td>Main pool; no splash pad; no FlowRider. Pool likely too cold for Alaska.</td>
+            <td>Adventure Ocean; rock climbing wall; mini golf; Centrum live music area; smaller ship = more community feel</td>
+            <td>Traditional 5pm / 7:30pm, or My Time Dining</td>
+            <td>Production shows; Schooner Bar piano singalong (guest favorite highlight); Centrum live music/aerial acrobatics; comedy shows</td>
+            <td>Older ship (2003) but well-liked. Smaller ship = cozier. Some note dated décor. Generally praised for service. Balconies good size for age.</td>
+            <td>Quieter, smaller-ship vibe. Good for families who want less chaotic experience. Kids activities limited vs. newer ships. Pool cold — dress warmly.</td>
+          </tr>
+
+          <tr class="cmp-rc">
+            <td>Voyager of the Seas</td>
+            <td>15 decks (14 accessible)<br>~3,286 guests</td>
+            <td>⚠️ Pool availability in Alaska not confirmed. Solarium adults only, may be warmer. Ship has indoor promenade which helps.</td>
+            <td>✅ Yes; Royal Promenade great for kids to explore</td>
+            <td>Voyagers (9–12) self-checkout from 9am ✅<br>Younger: parent required</td>
+            <td>Sprinkles soft serve until ~10pm</td>
+            <td>✅ Café Promenade 24 hrs (sandwiches, snacks, pizza slices)</td>
+            <td>✅ Windjammer 6:30am–9pm</td>
+            <td>Main pool; no splash pad; FlowRider (surf simulator). No pool movie confirmed.</td>
+            <td>Adventure Ocean; Royal Promenade (3-deck indoor street); ice rink (Studio B); rock climbing; mini golf; FlowRider; arcade</td>
+            <td>Traditional 5pm / 7:30pm, or My Time Dining</td>
+            <td>Ice Odyssey (ice show in Studio B, ~35 min, fan favorite); Broadway Rhythm &amp; Rhyme; Music in Pictures; Schooner Bar; Promenade events/parades</td>
+            <td>1999, refurbed 2019. Royal Promenade loved. Some note dated cabin finishes. Overall positive. Café Promenade beloved for 24hr snacks.</td>
+            <td>Great for active families; kids love the Promenade and ice rink. More "resort" feel. Busier/louder than Serenade but more to do.</td>
+          </tr>
+
+          <!-- DISNEY -->
+          <tr class="cmp-disney">
+            <td>Disney Magic</td>
+            <td>11 decks<br>~2,713 guests</td>
+            <td>✅ Pool water warm/heated. FunnelVision movie screen at pool. Two pools (AquaDunk slide). Family-focused.</td>
+            <td>✅ Yes; Disney's open atmosphere</td>
+            <td>Oceaneer Club/Lab (3–10): 8+ can self-checkout ✅; Edge (11–14) free; Vibe (14–17) free. Under 8 parent required.</td>
+            <td>Eye Scream Treats ~10:30am–11pm</td>
+            <td>Daisy's Pizza closes 6:30pm, reopens 9:30pm–midnight</td>
+            <td>✅ Cabanas buffet self-serve (breakfast + lunch)</td>
+            <td>✅ Heated pool; FunnelVision movies at pool. AquaDunk waterslide. Mickey Pool (1.5 ft, toddlers — this is on Wonder; Magic has AquaDunk).</td>
+            <td>Oceaneer Club themed activities; character meets; AquaDunk slide; Midship Detective Agency (ship-wide game); deck parties; fireworks at sea</td>
+            <td>Fixed rotational dining: Early ~5:45pm or Late ~8pm entire cruise (same servers rotate with you)</td>
+            <td>Tangled: The Musical (Magic exclusive — full Broadway-quality show); Frozen Sing-Along on deck (Alaska specific); Pirates IN the Caribbean deck party (fall 2026+); character shows</td>
+            <td>Older ship (1998) but well-maintained Disney standards. Cabins on smaller side; some note storage tight. AquaDunk popular. Oceaneer Club highly praised.</td>
+            <td>Top pick for families with young children (3–10). Character meets, immersive theming, highest kids-club quality. Older ship but Disney keeps it pristine. Adults also love it.</td>
+          </tr>
+
+          <tr class="cmp-disney">
+            <td>Disney Wonder</td>
+            <td>11 decks<br>~2,713 guests</td>
+            <td>✅ Pool water warm. FunnelVision movies at pool. Mickey Pool (1.5 ft for toddlers) + main pool + AquaLab splash zone (kids).</td>
+            <td>✅ Yes</td>
+            <td>Oceaneer Club/Lab (3–10): 8+ self-checkout ✅; Edge (11–14) free; Vibe (14–17) free. Under 8 parent required.</td>
+            <td>Eye Scream Treats ~10:30am–11pm</td>
+            <td>Daisy's Pizza closes 6:30pm, reopens 9:30pm–midnight</td>
+            <td>✅ Cabanas buffet self-serve (breakfast + lunch)</td>
+            <td>✅ Heated pool; FunnelVision; Mickey Pool (toddlers 1.5 ft); AquaLab splash zone (kids). Best toddler pool setup of all 8 ships.</td>
+            <td>Oceaneer Club; Tiana's Place dining (fan favorite); character meets; Midship Detective Agency; deck parties; AquaLab; Frozen Sing-Along; fireworks</td>
+            <td>Fixed rotational dining: Early ~5:45pm or Late ~8pm entire cruise</td>
+            <td>Frozen: A Musical Spectacular; Aladdin: A Musical Spectacular; Disney Dreams; Frozen Sing-Along (Alaska specific); Pirates IN the Caribbean deck party (spring 2026+); Broadway Stars Series</td>
+            <td>Same ship class as Magic (1999). Tiana's Place NEW and fan favorite. Mickey Pool and AquaLab make this particularly strong for toddlers/young kids. Cabins same size as Magic.</td>
+            <td>Best for families with toddlers/young kids (under 10). Tiana's Place restaurant is a highlight. Same high Disney quality as Magic. Wonder has slightly better pool setup for little ones.</td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ================================================ -->
+  <!-- DISCOVERY PRINCESS                               -->
+  <!-- ================================================ -->
+  <div class="ship-card" id="discovery-princess">
+    <div class="ship-header header-princess">
+      <div>
+        <div style="margin-bottom:5px"><span class="ship-badge badge-princess">Princess Cruises</span></div>
+        <h2>Discovery Princess <a href="#compare" class="compare-link">⚖️ Compare to other ships ↑</a></h2>
+      </div>
+      <div class="ship-specs">
+        Built 2022 &nbsp;·&nbsp; 145,000 GT<br>
+        19 decks (15 guest-accessible)<br>
+        Capacity: ~3,660 guests
+      </div>
+      <a class="search-link" href="https://www.alaskacruises.com/cruise-lines/alaska-princess-cruises.html" target="_blank">Search sailings ↗</a>
+    </div>
+    <table class="ship-table">
+      <tr class="section-header"><td colspan="2">General Information</td></tr>
+      <tr class="data-row">
+        <td class="question">Decks / guest capacity</td>
+        <td class="answer">19 decks total, 15 guest-accessible; ~3,660 guests at double occupancy. 1,830 staterooms. 1,346 crew.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Pool heated? Alaska usable?</td>
+        <td class="answer"><span class="partial">Partially.</span> 4 pools: 2 main top-deck pools, Wake View infinity pool, and adults-only Retreat Pool. <em>Heating status of main outdoor pools not officially confirmed.</em> 10 hot tubs — these are definitely warm and popular in Alaska. Forum consensus: most people stick to hot tubs outdoors in Alaska, not the main pools. The Watercolor Fantasy fountain show (85-jet light show) runs at night on the main pool deck.</td>
+      </tr>
+
+      <tr class="section-header"><td colspan="2">What Kids Care About</td></tr>
+      <tr class="data-row">
+        <td class="question">Can kids roam ship without adult supervision?</td>
+        <td class="answer">No strict "no roaming" rule, but Princess expects parents to supervise children. Teens 13–17 have their own area (Beach House) and more freedom. All under-18s must be in their staterooms by 1:00 AM. In practice, many families let older kids (10+) roam the ship in small groups; this is broadly accepted but left to parents' discretion.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Kids club self-checkout?</td>
+        <td class="answer"><span class="no">No</span> for ages 3–7 (Tree House): parent/guardian must sign in/out; staff have pagers to contact you.<br><span class="yes">Yes</span> for ages 8–12 (The Lodge): kids can sign themselves in/out.<br>Ages 13–17 (Beach House): come and go freely, no check-in required.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Kids club activities</td>
+        <td class="answer">Camp Discovery (partnership with Discovery Channel). Activities include: MythBusters-style science experiments, Alaska destination-immersive programs (local wildlife, culture), Shark Hunters interactive scavenger hunts, Animal Planet puppet and mask making. Alaska-specific: glacier science activities, Alaskan wildlife education. Hours: Sea days 9am–noon, 2–5pm, 7–10pm; Port days 8am–5pm, 7–10pm.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Self-serve ice cream hours</td>
+        <td class="answer">Complimentary soft-serve ice cream station on the pool deck with daily-changing flavors, sprinkles and chocolate sauce available. Available <strong>approximately 11am–10pm</strong> (daytime/evening pool hours). <em>Exact hours vary — check daily Patter on board.</em></td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Self-serve pizza/sliders/pasta hours</td>
+        <td class="answer">Pool-deck pizza counter (hand-tossed Neapolitan-style): open approximately <strong>late morning to late night</strong> (roughly noon–midnight on sea days). World Fresh Marketplace/Horizon Court buffet (includes pizza, pasta, burgers, tacos): open <strong>5am–11pm</strong> (midnight on some days) — serves all-day including these items.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Self-serve breakfast from buffet (without adults)?</td>
+        <td class="answer"><span class="yes">Yes.</span> The Horizon Court / World Fresh Marketplace buffet is a self-serve format open from 5am, serving a full breakfast spread. Kids can serve themselves freely.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Pool for kids? Movies at pool?</td>
+        <td class="answer">Main pool area accessible to all; Retreat Pool is adults-only. 10 hot tubs. <strong>Movies Under the Stars (MUTS)</strong>: Princess's signature outdoor movie screen on the pool deck shows movies, sporting events, and shows throughout the day and evening — a great Alaska-evening activity bundled up under blankets (Princess provides them). Not ideal for Alaska swimming but fantastic for movie nights on deck.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Other onboard activities for kids</td>
+        <td class="answer">Mini golf, sports courts (basketball, volleyball, paddle tennis), fitness center (age restrictions apply), Seaview Walk (top deck walking track), arcade, teen area with hot tub (ages 13–17). Alaska-specific enrichment: ranger talks, wildlife spotting, binoculars for glacier viewing.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Movies available other times?</td>
+        <td class="answer"><span class="yes">Yes.</span> Movies Under the Stars shows movies throughout day/evening. In-room TV has an on-demand movie selection. Movies also shown in the ship's theater.</td>
+      </tr>
+
+      <tr class="section-header"><td colspan="2">What Adults Care About</td></tr>
+      <tr class="data-row">
+        <td class="question">Daily / evening activities</td>
+        <td class="answer">Sea days: trivia, bingo, wine tastings, cooking demos, photography seminars, dance lessons (ballroom, salsa, country line dance), art auctions, fitness classes, spa seminars, casino tournaments. Evening: production shows, comedy, live music, themed parties, casino, Movies Under the Stars, deck parties.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Entertainment (specific shows)</td>
+        <td class="answer">Nightly Broadway-style productions with live orchestra and full cast. Alaska-specific programming Princess is known for: <strong>Puppies in the Piazza</strong> (Alaskan husky sled dog history), <strong>Deadliest Catch captains</strong> (Q&amp;A with actual Bering Sea crab fishermen), <strong>North to Alaska</strong> (original show by Alaska singer-storyteller Steve Hites), <strong>Candlelight Concert: Fire &amp; Ice</strong> (Alaska singer-songwriters, 2x per voyage), <strong>Native Alaskan storytellers</strong> speaker series. Also: magicians, illusionists, comedians, string quartets.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Timed dinner seatings?</td>
+        <td class="answer"><span class="yes">Yes</span> (your choice). Three options: <strong>Traditional Early</strong> (~5:00pm), <strong>Traditional Late</strong> (~7:15pm) — same table/waitstaff every night. Or <strong>Anytime/Reservable Dining</strong> (5:30–10pm) — walk-in or book via the Princess MedallionClass app before sailing. Many families prefer Anytime for flexibility with kids.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Vibe with small children</td>
+        <td class="answer">Princess is family-friendly but not a "kids-first" line like Disney. Alaska sailings skew slightly older than Caribbean sailings, but Discovery Princess in July still has many families. Other guests are generally tolerant and friendly. The ship is large enough that adults and families can both find their own space. Not overwhelming with small kids, but you won't find the same level of immersive kids programming as Disney or even Royal Caribbean's biggest ships.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Stateroom pluses / minuses</td>
+        <td class="answer"><span class="yes">+</span> Nearly all outside cabins have private balconies (1,438 of 1,830 staterooms). Wake View infinity-style pool views from some cabins are stunning. Aft-facing balconies offer some of the best glacier views.<br>
+        <span class="no">−</span> Lifeboats obstruct views from Decks 7–8 (significant block). Deck 8 above the theater can hear noise during shows and rehearsals. Cabins below/near the aft buffet (Horizon Court) can hear chair scraping and foot traffic from 6am onward. Midship Decks 9–11 are the sweet spot for quiet + stability.</td>
+      </tr>
+
+      <tr class="section-header"><td colspan="2">Tips &amp; Notables</td></tr>
+      <tr class="data-row">
+        <td class="question">Key tips / pluses / minuses</td>
+        <td class="answer">
+          <div class="tip-box">
+            ✅ Discovery Princess is one of Princess's newest and largest ships (2022) — better facilities than Royal Princess<br>
+            ✅ Alaska enrichment programming (Deadliest Catch, dog sled history, Native storytellers) is a genuine highlight that other lines don't match<br>
+            ✅ MedallionClass technology makes dining reservations and ordering easy<br>
+            ✅ Movies Under the Stars on a cold Alaska night (under provided blankets) is a fan favorite<br>
+            ⚠️ This ship runs one-way Whittier↔Vancouver itineraries — you'll need to arrange travel to/from Whittier (train or flight) which adds logistics<br>
+            ❌ Main outdoor pools unlikely to be appealing in Alaska temperatures — plan on hot tubs<br>
+            ❌ Very large ship (3,660 guests) — can feel crowded at peak times (sailaway, port days returning)
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- ================================================ -->
+  <!-- ROYAL PRINCESS                                   -->
+  <!-- ================================================ -->
+  <div class="ship-card" id="royal-princess">
+    <div class="ship-header header-princess">
+      <div>
+        <div style="margin-bottom:5px"><span class="ship-badge badge-princess">Princess Cruises</span></div>
+        <h2>Royal Princess <a href="#compare" class="compare-link">⚖️ Compare to other ships ↑</a></h2>
+      </div>
+      <div class="ship-specs">
+        Built 2013 &nbsp;·&nbsp; 141,000 GT<br>
+        18 decks (15 passenger-accessible)<br>
+        Capacity: ~3,560 guests (max 4,272)
+      </div>
+      <a class="search-link" href="https://www.alaskacruises.com/cruise-lines/alaska-princess-cruises.html" target="_blank">Search sailings ↗</a>
+    </div>
+    <table class="ship-table">
+      <tr class="section-header"><td colspan="2">General Information</td></tr>
+      <tr class="data-row">
+        <td class="question">Decks / guest capacity</td>
+        <td class="answer">18 decks (15 passenger-accessible); ~3,560 guests (lower berths), max 4,272. 1,780 staterooms. 1,346 crew. Originally the flagship Royal Class ship (2013).</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Pool heated? Alaska usable?</td>
+        <td class="answer"><span class="partial">Partially.</span> 2 main swimming pools + 8 outdoor Jacuzzis. <em>Pool heating not confirmed.</em> Forum reports indicate hot tubs are very popular on Alaska sailings; outdoor pools are used by some but most guests stick to hot tubs in the cool weather. Lotus Spa has a heated thermal suite (additional cost).</td>
+      </tr>
+
+      <tr class="section-header"><td colspan="2">What Kids Care About</td></tr>
+      <tr class="data-row">
+        <td class="question">Can kids roam ship without adult supervision?</td>
+        <td class="answer">Same as Discovery Princess — parent discretion for under-13; teens 13–17 have more freedom; 1am curfew for under-18. Royal Princess has a dedicated teens-only outdoor space with hot tub.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Kids club self-checkout?</td>
+        <td class="answer">Same as Discovery Princess: <span class="no">No</span> for ages 3–7 (Tree House, parent must sign in/out). <span class="yes">Yes</span> for ages 8–12 (The Lodge). 13–17 (Beach House) come and go freely.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Kids club activities</td>
+        <td class="answer">Same Camp Discovery program as Discovery Princess (MythBusters science, Alaska-themed activities, scavenger hunts, Animal Planet crafts). Hours: Sea days 9am–noon, 2–5pm, 7–10pm; Port days 8am–5pm, 7–10pm.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Self-serve ice cream hours</td>
+        <td class="answer">Soft-serve by pool, ~11am–10pm. Same as fleet. Check daily Patter for exact hours.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Self-serve pizza/sliders/pasta hours</td>
+        <td class="answer">Pool-deck pizza: late morning to late night. Horizon Court buffet (5am–11pm) has pizza and pasta. Same as Discovery Princess.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Self-serve breakfast without adults?</td>
+        <td class="answer"><span class="yes">Yes.</span> Horizon Court buffet is self-serve from 5am.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Pool for kids? Movies at pool?</td>
+        <td class="answer">2 main pools (family access) + hot tubs. Teens-only hot tub area on upper deck. <strong>Movies Under the Stars</strong> on pool deck, same as fleet. Great for Alaska evenings.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Other activities for kids</td>
+        <td class="answer">Mini golf, sports courts, arcade, teens area with hot tub. Alaska enrichment activities (glacier talks, wildlife spotting). Same range as Discovery Princess but on a somewhat older/smaller ship.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Movies available other times?</td>
+        <td class="answer"><span class="yes">Yes.</span> MUTS + in-room on-demand movies.</td>
+      </tr>
+
+      <tr class="section-header"><td colspan="2">What Adults Care About</td></tr>
+      <tr class="data-row">
+        <td class="question">Daily / evening activities</td>
+        <td class="answer">Same Princess fleet programming: trivia, bingo, wine tasting, dance lessons, art auctions, cooking demos. Evening: production shows, comedy, live music, casino, MUTS.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Entertainment (specific shows)</td>
+        <td class="answer">Same Alaska enrichment package as fleet: Puppies in the Piazza, Deadliest Catch captains, North to Alaska, Candlelight Concert: Fire &amp; Ice, Native Alaskan storytellers, Broadway-style production shows with live orchestra. Nightly variety (magicians, comedians, string quartets).</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Timed dinner seatings?</td>
+        <td class="answer"><span class="yes">Yes</span> — same as fleet: Traditional Early (~5pm) or Late (~7:15pm), or Anytime Dining (5:30–10pm, reserve via app).</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Vibe with small children</td>
+        <td class="answer">Same as Discovery Princess — family-friendly but not family-first. Royal Princess does <strong>round-trip Seattle with Glacier Bay</strong>, which is one of the most scenic Princess itineraries — adults and kids alike tend to be out on deck a lot for glacier viewing. Good family vibe on Alaska sailings.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Stateroom pluses / minuses</td>
+        <td class="answer"><span class="yes">+</span> Good balcony percentage (Royal-class ships). Midship Decks 9–11 are quiet and stable. Aft balconies have great wake and glacier views.<br>
+        <span class="no">−</span> Same as fleet: lifeboats obstruct views on Decks 7–8. Deck 8 above theater has show noise. This is an older ship (2013) vs. Discovery (2022) — slightly more dated facilities. Bathroom storage is limited.</td>
+      </tr>
+
+      <tr class="section-header"><td colspan="2">Tips &amp; Notables</td></tr>
+      <tr class="data-row">
+        <td class="question">Key tips / pluses / minuses</td>
+        <td class="answer">
+          <div class="tip-box">
+            ✅ Glacier Bay National Park itinerary — Royal Princess's route includes Glacier Bay, which fewer Princess ships do. Ranger-led talks during Glacier Bay passage are a highlight<br>
+            ✅ Round-trip Seattle — easiest logistics of the Princess Alaska options<br>
+            ✅ Same Alaska enrichment entertainment as newer Princess ships<br>
+            ⚠️ Older ship (2013) — some facilities feel more dated than Discovery (2022) or Star (2025)<br>
+            ⚠️ 2 pools is less than Discovery's 4 — more competition for pool/hot tub space on warm days<br>
+            ❌ No covered or heated pool option for Alaska weather
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- ================================================ -->
+  <!-- STAR PRINCESS                                    -->
+  <!-- ================================================ -->
+  <div class="ship-card" id="star-princess">
+    <div class="ship-header header-princess">
+      <div>
+        <div style="margin-bottom:5px"><span class="ship-badge badge-princess">Princess Cruises</span></div>
+        <h2>Star Princess <a href="#compare" class="compare-link">⚖️ Compare to other ships ↑</a></h2>
+      </div>
+      <div class="ship-specs">
+        Built 2025 (newest) &nbsp;·&nbsp; 175,500 GT<br>
+        21 decks<br>
+        Capacity: 4,320 guests (max 5,189)
+      </div>
+      <a class="search-link" href="https://www.alaskacruises.com/cruise-lines/alaska-princess-cruises.html" target="_blank">Search sailings ↗</a>
+    </div>
+    <table class="ship-table">
+      <tr class="section-header"><td colspan="2">General Information</td></tr>
+      <tr class="data-row">
+        <td class="question">Decks / guest capacity</td>
+        <td class="answer">21 decks; 4,320 guests (max 5,189). 2,157 staterooms. Princess's newest and largest ship, launched October 2025 — sister ship to Sun Princess (Condé Nast Traveler Mega Ship of the Year).</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Pool heated? Alaska usable?</td>
+        <td class="answer"><span class="yes">Best of the Princess fleet for Alaska.</span> 4 pools: 2 Lido Pools (open to all, Deck 17), Wake View infinity pool, and <strong>The Dome</strong> — an adults-only indoor-outdoor pool with a glass roof enclosure on Deck 17. The Dome is the standout for Alaska: covered from weather, warm, great views. Sanctuary Pool (suites only). <em>Note: Dome is adults-only; kids are limited to Lido and Wake View pools, which may be cold in Alaska.</em></td>
+      </tr>
+
+      <tr class="section-header"><td colspan="2">What Kids Care About</td></tr>
+      <tr class="data-row">
+        <td class="question">Can kids roam ship without adult supervision?</td>
+        <td class="answer">Same Princess fleet policy. On a ship this large (5,000+ capacity), older kids (10+) can easily get lost or roam broadly — parents should establish meeting points and ground rules. 1am curfew under-18.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Kids club self-checkout?</td>
+        <td class="answer">Same as fleet: <span class="no">No</span> for ages 3–7. <span class="yes">Yes</span> for ages 8–12. 13–17 come/go freely.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Kids club activities</td>
+        <td class="answer">Camp Discovery on the newest ship — likely the best-equipped facilities in the Princess fleet. Same programming (MythBusters, Alaska activities, scavenger hunts, Animal Planet crafts). Same hours as fleet. <em>Specific new features on Star Princess not yet widely documented due to ship's newness.</em></td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Self-serve ice cream hours</td>
+        <td class="answer">Soft-serve by pool, approximately 11am–10pm. Star Princess may have expanded options given its size — check daily Patter.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Self-serve pizza/sliders/pasta hours</td>
+        <td class="answer">Same as fleet: pool-deck pizza late morning to midnight; buffet 5am–11pm.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Self-serve breakfast without adults?</td>
+        <td class="answer"><span class="yes">Yes.</span> Buffet from 5am, fully self-serve.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Pool for kids? Movies at pool?</td>
+        <td class="answer">Lido Pools (family access, Deck 17); Wake View infinity pool. Kids excluded from The Dome. <strong>Movies Under the Stars</strong> on pool deck. <em>Given the ship's newness, Star Princess may have additional pool-deck features not yet widely reported.</em></td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Other activities for kids</td>
+        <td class="answer">As the newest Princess ship, Star Princess is expected to have the most comprehensive facilities: sports courts, mini golf, expanded arcade, teen area. Alaska enrichment programming same as fleet. <em>Full activity listing still emerging as ship was just launched in 2025.</em></td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Movies available other times?</td>
+        <td class="answer"><span class="yes">Yes.</span> MUTS + in-room on-demand.</td>
+      </tr>
+
+      <tr class="section-header"><td colspan="2">What Adults Care About</td></tr>
+      <tr class="data-row">
+        <td class="question">Daily / evening activities</td>
+        <td class="answer">Same Princess fleet programming plus potentially expanded offerings given ship size. The Dome is an adults-only pool and lounge area that functions as a premium adult retreat.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Entertainment (specific shows)</td>
+        <td class="answer">Same Alaska enrichment package as fleet (Deadliest Catch, Puppies in the Piazza, Candlelight Concert, etc.). Star Princess likely has a newer, larger theater with more productions. <em>Specific show titles for 2027 sailings not yet published.</em></td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Timed dinner seatings?</td>
+        <td class="answer">Same as fleet: Traditional Early (~5pm) or Late (~7:15pm); Anytime Dining 5:30–10pm via app.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Vibe with small children</td>
+        <td class="answer">On a ship with 5,000 guests, it's a mixed crowd. Alaska sailings still attract families but also many adults-only cruisers. The sheer scale means families and adults can both find their space easily. Newest ship means freshest facilities and staff enthusiasm. <em>Less user feedback available due to ship's recent launch.</em></td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Stateroom pluses / minuses</td>
+        <td class="answer"><span class="yes">+</span> Newest, freshest staterooms in the Princess fleet. Deluxe Balcony cabins are ~200 sq ft + 35 sq ft balcony (notably larger than older ships). Extended balcony options. Newest technology (USB outlets everywhere, MedallionClass integration).<br>
+        <span class="no">−</span> Noise from metal pool deck chairs above can start as early as 6am. Avoid cabins directly below Deck 17 Lido Pool area. Very large ship — distances between venues are long. With 5,000 guests, busier common areas than Discovery or Royal Princess.</td>
+      </tr>
+
+      <tr class="section-header"><td colspan="2">Tips &amp; Notables</td></tr>
+      <tr class="data-row">
+        <td class="question">Key tips / pluses / minuses</td>
+        <td class="answer">
+          <div class="tip-box">
+            ✅ Newest Princess ship — best facilities, freshest cabins, most modern technology<br>
+            ✅ The Dome indoor-outdoor pool is the best pool option for Alaska cold weather among all Princess ships<br>
+            ✅ Round-trip Seattle — easy logistics<br>
+            ✅ Sister ship to Sun Princess which was extremely well-reviewed; Star should be similar<br>
+            ⚠️ Very large ship (up to 5,189 guests) — largest in this table by far. Prepare for more crowds and a resort-like scale<br>
+            ⚠️ As a new ship, less user experience data available — some features may still be being refined<br>
+            ❌ Kids cannot access The Dome (adults-only) — the best heated indoor pool is off-limits to them
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- ================================================ -->
+  <!-- QUANTUM OF THE SEAS                              -->
+  <!-- ================================================ -->
+  <div class="ship-card" id="quantum-of-the-seas">
+    <div class="ship-header header-rc">
+      <div>
+        <div style="margin-bottom:5px"><span class="ship-badge badge-rc">Royal Caribbean</span></div>
+        <h2>Quantum of the Seas <a href="#compare" class="compare-link">⚖️ Compare to other ships ↑</a></h2>
+      </div>
+      <div class="ship-specs">
+        Built 2014 &nbsp;·&nbsp; 168,666 GT<br>
+        16 decks<br>
+        Capacity: ~4,160 guests
+      </div>
+      <a class="search-link" href="https://www.alaskacruises.com/cruise-lines/alaska-royal-caribbean-cruises.html" target="_blank">Search sailings ↗</a>
+    </div>
+    <table class="ship-table">
+      <tr class="section-header"><td colspan="2">General Information</td></tr>
+      <tr class="data-row">
+        <td class="question">Decks / guest capacity</td>
+        <td class="answer">16 decks; ~4,160 guests; 2,105 staterooms; ~1,500 crew. Quantum-class ship — purpose-built with innovative features including iFly, North Star, bumper cars, and roller skating.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Pool heated? Alaska usable?</td>
+        <td class="answer"><span class="yes">Best RC option for Alaska pool use.</span> 4 pools including one with a <strong>retractable roof (indoor/outdoor)</strong> — this is the main pool kids use in Alaska and it stays warm. <strong>Solarium</strong> (adults 16+, often opened to families in Alaska cold weather — ask at guest services). H2O Zone outdoor water park may be weather-dependent. 10 Jacuzzis. Multiple reviewers specifically highlight Quantum's covered pool as ideal for Alaska.</td>
+      </tr>
+
+      <tr class="section-header"><td colspan="2">What Kids Care About</td></tr>
+      <tr class="data-row">
+        <td class="question">Can kids roam ship without adult supervision?</td>
+        <td class="answer">Kids under 12 must be accompanied by adults or signed into Adventure Ocean. Ages 12/13+ (Teen Club) can come and go freely. In practice, Quantum's layout (large ship with many activity areas) means older kids can reasonably navigate independently once parents are comfortable. No explicit "no roaming" rule for older kids.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Kids club self-checkout?</td>
+        <td class="answer"><span class="no">No</span> for Aquanauts (3–5) and Explorers (6–8): parent must sign out.<br><span class="yes">Yes</span> for Voyagers (9–12): parents can authorize self-sign-out.<br>Teen Club (12/13–17): come/go freely, no check-in.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Kids club activities (Adventure Ocean)</td>
+        <td class="answer">Adventure Ocean leans toward free play with staff-facilitated activities: science experiments, arts and crafts, scavenger hunts, dodgeball, drama. Quantum-specific adds: kids can access some of the ship's signature attractions with the club. Hours: Sea days 9am–noon, 2–5pm, 7–10pm (after 10pm, hourly charge applies until ~1–2am). Port days: open continuously.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Self-serve ice cream hours</td>
+        <td class="answer"><strong>Sprinkles</strong> soft-serve ice cream on pool deck, self-serve, <strong>until approximately 10pm</strong>. Two machines near the main pool area. Complimentary.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Self-serve pizza/sliders/pasta hours</td>
+        <td class="answer"><strong>Windjammer Marketplace buffet</strong>: open 7am–11:30am (breakfast), 11:30am–3:30pm (lunch), 6:30–9pm (dinner). Includes pizza, burgers, pasta, stir fry. Sorrento's pizza available for grab-and-go slices during the day. <em>Late-night dining options vary — check daily compass.</em></td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Self-serve breakfast without adults?</td>
+        <td class="answer"><span class="yes">Yes.</span> Windjammer buffet is fully self-serve starting from 6:30am (continental) / 7am (full breakfast). Kids can go independently.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Pool for kids? Movies at pool?</td>
+        <td class="answer">H2O Zone outdoor water park (interactive water play area with spray jets, geysers — good for younger kids); main indoor/outdoor pool with retractable roof. Solarium is 16+ but staff often open it to families in cold Alaska weather. <span class="unknown">Movies at pool: not confirmed — Quantum does not have a large outdoor movie screen equivalent to Princess's MUTS.</span></td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Other activities for kids</td>
+        <td class="answer"><strong>Quantum-class signature features:</strong> North Star (glass observation capsule rising ~300ft above sea — stunning glacier views, book early), iFly (indoor skydiving simulation, additional fee), bumper cars, roller skating. Rock climbing wall, basketball court, pickleball, dodgeball. Arcade. Adventure Ocean activities. These unique features are a major reason families choose Quantum.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Movies available other times?</td>
+        <td class="answer">In-room TV with movie options. <span class="unknown">Dedicated outdoor movie screen not confirmed on Quantum.</span></td>
+      </tr>
+
+      <tr class="section-header"><td colspan="2">What Adults Care About</td></tr>
+      <tr class="data-row">
+        <td class="question">Daily / evening activities</td>
+        <td class="answer">Quantum is the most activity-dense ship in this comparison. Daytime: iFly, North Star, bumper cars, rock climbing, fitness classes, casino, spa, cooking demos. Evening: shows, Music Hall with live bands, casino, bars, Two70° venue (large panoramic lounge that transforms for performances).</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Entertainment (specific shows)</td>
+        <td class="answer">No traditional Broadway show. Original productions in the Royal Theater: <strong>Starwater</strong> (multi-sensory live performance blending technology + emotion), <strong>Sonic Odyssey</strong> (immersive sound/light/choreography), <strong>Sequins &amp; Feathers</strong> (Las Vegas to Paris glamour show). <strong>Music Hall</strong>: nightly rotating cover bands (classic rock, disco, big band). Two70° features robotic screen performances. Also: comedians, game shows (Love &amp; Marriage), trivia.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Timed dinner seatings?</td>
+        <td class="answer"><span class="yes">Yes.</span> Traditional: 5:00pm or 7:30pm (same table, same servers every night). My Time Dining: flexible arrival 5:30–9:30pm (walk-up or reserve via app). Windjammer buffet dinner: 6:30–9pm.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Vibe with small children</td>
+        <td class="answer">Quantum is particularly well-suited for families with active kids who love tech and adventure. Multiple reviewers describe it as feeling like "an amusement park at sea." Kids with energy thrive here. That said, it's a large, active ship — if you have very young kids (under 5) who need naps and calm, the constant energy can be a lot. Families with kids 6–14 seem to have the best time.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Stateroom pluses / minuses</td>
+        <td class="answer"><span class="yes">+</span> Cabins are above-average in size for the industry (ocean view: 198 sq ft). Good storage (two armoires, multiple drawers, mini-fridge). <strong>Virtual Balcony staterooms</strong> (interior cabins with a floor-to-ceiling screen showing live outdoor video) are a Quantum innovation — useful for Alaska views without balcony price. Connects well to adjacent staterooms for families.<br>
+        <span class="no">−</span> Limited electrical outlets — bring a power strip. No retractable clothesline in shower (bring magnetic hooks). When extra bed is pulled down, aisle becomes very tight. Smoke smell from casino can reach adjacent hallways.</td>
+      </tr>
+
+      <tr class="section-header"><td colspan="2">Tips &amp; Notables</td></tr>
+      <tr class="data-row">
+        <td class="question">Key tips / pluses / minuses</td>
+        <td class="answer">
+          <div class="tip-box">
+            ✅ Best RC ship for Alaska pool use — covered retractable-roof pool is warm even in cold weather<br>
+            ✅ North Star observation capsule offers dramatic glacier and scenery views — <strong>book it as soon as you board</strong><br>
+            ✅ iFly indoor skydiving is a bucket-list experience for kids and adults<br>
+            ✅ Bumper cars and roller skating are genuinely unique at sea<br>
+            ✅ Two70° venue (panoramic aft lounge) is spectacular for Alaska scenery while socializing<br>
+            ⚠️ No traditional Broadway show — if theater shows matter to you, Voyager may be a better fit<br>
+            ⚠️ Solarium is technically 16+ — on Alaska sailings, often opened to all, but not guaranteed<br>
+            ❌ Book North Star, iFly, and specialty dining <em>before</em> you board — slots fill up fast
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- ================================================ -->
+  <!-- SERENADE OF THE SEAS                             -->
+  <!-- ================================================ -->
+  <div class="ship-card" id="serenade-of-the-seas">
+    <div class="ship-header header-rc">
+      <div>
+        <div style="margin-bottom:5px"><span class="ship-badge badge-rc">Royal Caribbean</span></div>
+        <h2>Serenade of the Seas <a href="#compare" class="compare-link">⚖️ Compare to other ships ↑</a></h2>
+      </div>
+      <div class="ship-specs">
+        Built 2003 &nbsp;·&nbsp; 90,090 GT<br>
+        12 passenger decks<br>
+        Capacity: ~2,143 guests
+      </div>
+      <a class="search-link" href="https://www.alaskacruises.com/cruise-lines/alaska-royal-caribbean-cruises.html" target="_blank">Search sailings ↗</a>
+    </div>
+    <table class="ship-table">
+      <tr class="section-header"><td colspan="2">General Information</td></tr>
+      <tr class="data-row">
+        <td class="question">Decks / guest capacity</td>
+        <td class="answer">12 passenger decks; ~2,143 guests; 1,073 staterooms. The smallest ship in this comparison. Radiance-class — known for extensive glass walls and windows for scenic viewing. Built 2003.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Pool heated? Alaska usable?</td>
+        <td class="answer"><span class="no">Main pool NOT heated</span> per multiple forum reports. 2 pools: main outdoor family pool (retractable glass roof provides shelter but not heat) + Solarium (adults-only, enclosed). Hot tubs: 3 outdoor Jacuzzis. Forum consensus: main pool is chilly for Alaska; Solarium is great but adults-only (18+); hot tubs are the go-to. The retractable glass roof over the main pool area helps block wind but doesn't heat the water.</td>
+      </tr>
+
+      <tr class="section-header"><td colspan="2">What Kids Care About</td></tr>
+      <tr class="data-row">
+        <td class="question">Can kids roam ship without adult supervision?</td>
+        <td class="answer">Smaller ship makes it easier for kids to navigate. Same RC fleet policy: under-12 must be in Adventure Ocean or with an adult. Teens (12/13+) can come/go freely. The smaller size of Serenade (2,143 guests) means fewer people and a more intimate feel — some families find this makes supervision easier.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Kids club self-checkout?</td>
+        <td class="answer">Same as Quantum: <span class="no">No</span> for ages 3–8. <span class="yes">Yes</span> for Voyagers (9–12) if authorized. Teens come/go freely.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Kids club activities (Adventure Ocean)</td>
+        <td class="answer">Same Adventure Ocean program as fleet — free play + facilitated activities (science, crafts, scavenger hunts). Same hours as fleet. <em>Smaller ship means smaller Adventure Ocean space than Quantum or Voyager.</em></td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Self-serve ice cream hours</td>
+        <td class="answer">Sprinkles soft-serve on pool deck, complimentary. <span class="unknown">Exact hours not confirmed for Serenade — approximately daytime/evening pool hours.</span></td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Self-serve pizza/sliders/pasta hours</td>
+        <td class="answer">Windjammer Marketplace buffet (same as fleet): breakfast 7am, lunch 11:30am, dinner 6:30pm. Seaview Cafe available for lighter bites at other hours.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Self-serve breakfast without adults?</td>
+        <td class="answer"><span class="yes">Yes.</span> Windjammer buffet is self-serve.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Pool for kids? Movies at pool?</td>
+        <td class="answer">One main family pool (glass roof for shelter, not enclosed/heated). Solarium is 18+ only. Hot tubs are warm and usable. <span class="unknown">Outdoor movie screen: not confirmed on Serenade.</span> The ship's extensive glass walls throughout provide great Alaska scenery viewing without needing to be on deck.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Other activities for kids</td>
+        <td class="answer">Rock climbing wall (40-foot, no reservation needed), mini-golf, arcade games. Note: Serenade does NOT have iFly, bumper cars, waterslides, or FlowRider. Fewer activity options than Quantum or Voyager — this is the "quieter" RC ship in the lineup.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Movies available other times?</td>
+        <td class="answer">In-room movie options. <span class="unknown">Large outdoor movie screen not confirmed.</span></td>
+      </tr>
+
+      <tr class="section-header"><td colspan="2">What Adults Care About</td></tr>
+      <tr class="data-row">
+        <td class="question">Daily / evening activities</td>
+        <td class="answer">Wine tastings, digital photography seminars, blackjack tournaments, fitness classes, spa, Centrum live music and dancing (the 10-story glass atrium at the heart of the ship is a social hub). Evening: production shows, Centrum events, Schooner Bar (piano bar — a guest favorite), R Bar (retro cocktails), Vintages wine bar.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Entertainment (specific shows)</td>
+        <td class="answer">Production shows in the Tropical Theater. <strong>Schooner Bar</strong> singalong/piano bar is frequently cited as a highlight of Serenade evenings. Centrum performances (live music in the glass atrium are visually spectacular). Comedians. <em>Specific show titles for 2027 sailings not published.</em></td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Timed dinner seatings?</td>
+        <td class="answer"><span class="yes">Yes.</span> Traditional seating or My Time Dining. Reflections main dining room. Windjammer dinner 6:30–9pm. Seaview Cafe for lighter meals at other hours.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Vibe with small children</td>
+        <td class="answer">Serenade is the most intimate, quieter option among the RC Alaska ships. Reviewers describe it as feeling more like a "boutique" cruise. Smaller passenger count means less crowding and easier navigation. Families with young children may find the calmer pace appealing. However, fewer dedicated kids' activity options than larger ships. Good for families who prioritize scenery and relaxation over activities.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Stateroom pluses / minuses</td>
+        <td class="answer"><span class="yes">+</span> Spacious oceanview staterooms with good storage. Updated with USB outlets by the bed. Sliding glass shower doors (vs. curtains). Attentive cabin stewards. Glass elevators (scenic views).<br>
+        <span class="no">−</span> Only ONE electrical outlet in cabins — bring a power bar/multi-adapter. Bathroom is very small with a cramped shower. Decor is dated (built 2003). Oceanview porthole windows can become scratched and cloudy. Luggage delivery on embarkation day is reportedly slow.</td>
+      </tr>
+
+      <tr class="section-header"><td colspan="2">Tips &amp; Notables</td></tr>
+      <tr class="data-row">
+        <td class="question">Key tips / pluses / minuses</td>
+        <td class="answer">
+          <div class="tip-box">
+            ✅ Smallest, most intimate ship in this comparison — great if you prefer fewer crowds<br>
+            ✅ Extensive glass walls throughout the ship make Alaska scenery viewing exceptional without going outside in cold weather<br>
+            ✅ Schooner Bar piano bar is frequently cited as a cruise highlight — lively and fun evenings<br>
+            ✅ Homeports in Vancouver — beautiful embarkation city with easier flight connections<br>
+            ✅ Most affordable interior price point in the RC Alaska lineup ($861–$960/pp)<br>
+            ⚠️ Oldest ship in this comparison (2003) — noticeably more dated facilities<br>
+            ⚠️ Main pool not heated — not ideal for cold Alaska weather; Solarium adults-only (18+)<br>
+            ❌ <strong>Bring a power bar</strong> — only one outlet per cabin is a consistent complaint<br>
+            ❌ Fewer kids' activity options than Quantum or Voyager — not the right ship if activities are a priority
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- ================================================ -->
+  <!-- VOYAGER OF THE SEAS                              -->
+  <!-- ================================================ -->
+  <div class="ship-card" id="voyager-of-the-seas">
+    <div class="ship-header header-rc">
+      <div>
+        <div style="margin-bottom:5px"><span class="ship-badge badge-rc">Royal Caribbean</span></div>
+        <h2>Voyager of the Seas <a href="#compare" class="compare-link">⚖️ Compare to other ships ↑</a></h2>
+      </div>
+      <div class="ship-specs">
+        Built 1999, renovated 2019 &nbsp;·&nbsp; 137,276 GT<br>
+        14 passenger decks<br>
+        Capacity: ~3,286 guests
+      </div>
+      <a class="search-link" href="https://www.alaskacruises.com/cruise-lines/alaska-royal-caribbean-cruises.html" target="_blank">Search sailings ↗</a>
+    </div>
+    <table class="ship-table">
+      <tr class="section-header"><td colspan="2">General Information</td></tr>
+      <tr class="data-row">
+        <td class="question">Decks / guest capacity</td>
+        <td class="answer">14 passenger decks; ~3,286 guests; 1,715 staterooms. Voyager-class — the original "revolutionary" RC ship featuring an ice rink, Royal Promenade (indoor street), and FlowRider. Extensively renovated in 2019, adding waterslides and aquapark.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Pool heated? Alaska usable?</td>
+        <td class="answer"><span class="partial">Partially.</span> 4 pools + Solarium (adults-only) + 7 Jacuzzis + 2 waterslides (Perfect Storm: Typhoon and Cyclone). <em>Main pool heating not confirmed for Alaska.</em> Solarium is covered and adult-only. Hot tubs are definitely warm. <strong>Slashaway Bay</strong> kids aquapark and waterslides: weather-dependent in Alaska. Forum consensus: Voyager has more water options than most ships but Alaska temperatures limit outdoor water use to hot tubs for most guests.</td>
+      </tr>
+
+      <tr class="section-header"><td colspan="2">What Kids Care About</td></tr>
+      <tr class="data-row">
+        <td class="question">Can kids roam ship without adult supervision?</td>
+        <td class="answer">Same RC fleet policy. The Royal Promenade (indoor shopping/social street) is a natural gathering hub for older kids. Many families let kids 10+ explore the Promenade and ship's interior independently. Under-12: must be in Adventure Ocean or with adults. Teens 12/13+: come/go freely.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Kids club self-checkout?</td>
+        <td class="answer">Same as fleet: <span class="no">No</span> for Aquanauts/Explorers. <span class="yes">Yes</span> for Voyagers (9–12) if authorized. Teens free to come/go.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Kids club activities (Adventure Ocean)</td>
+        <td class="answer">Same Adventure Ocean as fleet. Same hours. Voyager also has unique additions: kids can try the ice rink during designated family skating times, FlowRider (age/height restrictions apply), rock climbing wall.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Self-serve ice cream hours</td>
+        <td class="answer">Sprinkles soft-serve on pool deck, complimentary. <span class="unknown">Exact hours for Voyager not confirmed — approximately during pool hours.</span></td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Self-serve pizza/sliders/pasta hours</td>
+        <td class="answer">Windjammer Marketplace (same hours as fleet). Café Promenade on Royal Promenade serves pizza slices, sandwiches, and snacks <strong>24 hours</strong> — this is a great option for kids who want a snack at any time.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Self-serve breakfast without adults?</td>
+        <td class="answer"><span class="yes">Yes.</span> Windjammer buffet self-serve from 7am. Also, Café Promenade on the Royal Promenade is open 24 hours for pastries, sandwiches, and snacks.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Pool for kids? Movies at pool?</td>
+        <td class="answer"><strong>Slashaway Bay</strong> kids aquapark (interactive water play area with cannons and geysers — similar to H2O Zone on Quantum). Main pool + 2 waterslides. Hot tubs. Solarium is adults-only. <span class="unknown">Dedicated outdoor movie screen: not confirmed on Voyager.</span></td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Other activities for kids</td>
+        <td class="answer"><strong>Ice rink (Studio B)</strong> — actual ice skating on a cruise ship; family skating sessions available, plus professional ice shows. <strong>FlowRider</strong> surf simulator (a Voyager-class signature — age/height/weight requirements). Rock climbing wall (exterior of ship). Mini golf. Basketball court. Arcade. Laser tag (Battle for Planet Z). Royal Promenade — indoor street for shopping, food, people-watching (kids love wandering here).</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Movies available other times?</td>
+        <td class="answer">In-room movie selection. <span class="unknown">Outdoor movie screen not confirmed.</span></td>
+      </tr>
+
+      <tr class="section-header"><td colspan="2">What Adults Care About</td></tr>
+      <tr class="data-row">
+        <td class="question">Daily / evening activities</td>
+        <td class="answer">Ice skating sessions, FlowRider, rock climbing, fitness classes, cooking demos, casino, trivia, game shows. Evening: ice show, production shows, Schooner Bar piano bar, casino, themed deck parties, Love &amp; Marriage game show, Crazy Quest adult scavenger hunt, Battle for Planet Z laser tag.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Entertainment (specific shows)</td>
+        <td class="answer"><strong>Ice Odyssey</strong>: Tarot-themed professional ice skating show in Studio B (~35 min, free, spectacular — book ahead). <strong>Broadway Rhythm &amp; Rhyme</strong> and <strong>Music in Pictures</strong> in the 5-story Royal Theater. Also: family ice skating sessions, comedians, tribute bands, Schooner Bar singalongs, Love &amp; Marriage game show.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Timed dinner seatings?</td>
+        <td class="answer"><span class="yes">Yes.</span> Traditional or My Time Dining. Café Promenade open 24 hours for casual options.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Vibe with small children</td>
+        <td class="answer">Voyager is arguably the most "resort-feel" ship for families in this comparison. The Royal Promenade gives the ship a unique indoor mall/street atmosphere that kids love exploring. Very family-friendly with activity options at every age. The ice rink is a genuine wow moment for kids. Plenty of energy but the Solarium provides an adult escape. Can feel like controlled chaos on sea days — in a good way if you're an active family.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Stateroom pluses / minuses</td>
+        <td class="answer"><span class="yes">+</span> Good range of connecting cabin options added in 2019 renovation (Connecting Balcony, Connecting Oceanview, Connecting Interior). Family Suites available. "Promenade Interior" rooms look into the Royal Promenade below (no window to outside, but interesting for kids who like to people-watch).<br>
+        <span class="no">−</span> Standard cabins are the original 1999 dimensions — not spacious by modern standards. Promenade-view interior rooms can hear noise from the Royal Promenade (music, announcements). Older ship feel despite 2019 renovation. Limited outlets (bring power bar).</td>
+      </tr>
+
+      <tr class="section-header"><td colspan="2">Tips &amp; Notables</td></tr>
+      <tr class="data-row">
+        <td class="question">Key tips / pluses / minuses</td>
+        <td class="answer">
+          <div class="tip-box">
+            ✅ Ice skating on a cruise ship is a bucket-list item — the Studio B ice rink is real and fun for all ages<br>
+            ✅ Ice Odyssey professional ice show is consistently described as one of the best shows at sea<br>
+            ✅ Café Promenade open 24 hours — great for snacks at any hour (pizza, sandwiches, pastries)<br>
+            ✅ FlowRider surf simulator is a hit with older kids and adults<br>
+            ✅ Most affordable RC option in this table ($817–$828/pp interior) — a great value ship<br>
+            ✅ Homeports in Seattle (easy logistics for US families)<br>
+            ⚠️ Oldest ship in comparison (1999) — despite 2019 renovation, the bones are 25+ years old<br>
+            ❌ Main outdoor pools probably not ideal for Alaska — plan on hot tubs and indoor spaces<br>
+            ❌ FlowRider lines can be very long — go during off-peak hours (early morning, dinner time)
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- ================================================ -->
+  <!-- DISNEY MAGIC                                     -->
+  <!-- ================================================ -->
+  <div class="ship-card" id="disney-magic">
+    <div class="ship-header header-disney">
+      <div>
+        <div style="margin-bottom:5px"><span class="ship-badge badge-disney">Disney Cruise Line</span></div>
+        <h2>Disney Magic <a href="#compare" class="compare-link">⚖️ Compare to other ships ↑</a></h2>
+      </div>
+      <div class="ship-specs">
+        Built 1998 &nbsp;·&nbsp; 83,969 GT<br>
+        11 passenger decks<br>
+        Capacity: 2,713 guests · 877 staterooms
+      </div>
+      <a class="search-link" href="https://www.alaskacruises.com/cruise-lines/alaska-disney-cruises.html" target="_blank">Search sailings ↗</a>
+    </div>
+    <table class="ship-table">
+      <tr class="section-header"><td colspan="2">General Information</td></tr>
+      <tr class="data-row">
+        <td class="question">Decks / guest capacity</td>
+        <td class="answer">11 passenger decks; 2,713 guests max; 877 staterooms; ~945 crew. Disney's original ship (1998) — classic ocean-liner design with Disney theming throughout. Smaller and more intimate than the newer DCL ships (Dream, Wish).</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Pool heated? Alaska usable?</td>
+        <td class="answer"><span class="yes">Yes — pool water is reportedly warm/heated.</span> 3 pools on Deck 9: <strong>Goofy's Family Pool</strong> (max 4ft depth, families), <strong>AquaLab</strong> water play area (spray jets, features), <strong>Quiet Cove Pool</strong> (adults 18+). The pool deck is designed to be protected from wind. Multiple reviewers specifically note the pool water felt warm on Alaska sailings. 4 Jacuzzis. FunnelVision movie screen above the family pool.</td>
+      </tr>
+
+      <tr class="section-header"><td colspan="2">What Kids Care About</td></tr>
+      <tr class="data-row">
+        <td class="question">Can kids roam ship without adult supervision?</td>
+        <td class="answer">Disney's ship design puts the entire 5th deck aside for youth activities, and there's a general family-forward culture. Kids under 14 are expected to be supervised outside of youth clubs or be in supervised areas. Teens 14–17 (Vibe club) and 11–14 (Edge) have more independence. In practice, Alaska sailings are relatively calm and families generally let confident older kids (10+) navigate independently — the ship's layout is intuitive and the crowd is family-friendly.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Kids club self-checkout?</td>
+        <td class="answer">Oceaneer Club/Lab (ages 3–10):<br>
+        <span class="no">No</span> by default — parents sign in/out.<br>
+        <span class="yes">Yes</span> for ages 8+ if parents authorize self-checkout privileges at registration.<br>
+        Edge (ages 11–14): No controlled check-in/out — kids come and go freely.<br>
+        Vibe (ages 14–17): Fully independent.<br>
+        <em>Note: During "Open House" hours, the club is open-access and kids cannot be left unattended.</em></td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Kids club activities (Oceaneer Club/Lab)</td>
+        <td class="answer">Oceaneer Club: immersive Disney-themed play areas (character-themed rooms). Oceaneer Lab: hands-on science/tech activities, crafts, interactive games, coding, art. D Lounge (family venue): singing, dancing, games. Alaska-specific: <strong>Frozen character meet-and-greet</strong> (Elsa, Anna, Kristoff — a major draw for young kids), <strong>Anna's Frozen Fun Hunt</strong> (scavenger hunt). Deck parties, character parades. <em>Hours vary by sailing — consult the daily Navigator.</em></td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Self-serve ice cream hours</td>
+        <td class="answer"><strong>Eye Scream Treats</strong> on the pool deck (Deck 9): self-serve soft-serve, open approximately <strong>10:30am–11:00pm</strong>. Complimentary, multiple flavors.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Self-serve pizza/sliders/pasta hours</td>
+        <td class="answer"><strong>Daisy's Pizza Pies</strong> (part of Mickey &amp; Friends Festival of Foods on Deck 9/10): opens at breakfast time, closes approximately <strong>6–6:30pm</strong>, then reopens approximately <strong>9:30pm–midnight</strong>. <em>No 24-hour pizza option on this ship.</em> Cabanas (main buffet) covers lunch/dinner with other options.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Self-serve breakfast without adults?</td>
+        <td class="answer"><span class="yes">Yes.</span> <strong>Cabanas</strong> buffet serves a full self-serve breakfast with made-to-order omelets, meats, bakery items. Kids can serve themselves. Disney rotational dining for dinner is sit-down — kids need to be with family for the main dinner seating, but breakfast is buffet/casual.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Pool for kids? Movies at pool?</td>
+        <td class="answer">Goofy's Family Pool (4ft max, large family pool); AquaLab water play area for younger kids. <strong>FunnelVision</strong>: a large screen mounted on the ship's funnel above Goofy's Pool shows Disney animated classics, live-action films, and programming throughout the day. At night, the pool deck is covered over and turned into an outdoor movie venue. <em>Check daily Navigator for what's showing — movies listed each day.</em> This is a distinctive Disney feature not found on other cruise lines.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Other activities for kids</td>
+        <td class="answer">Disney character meets throughout the ship (rotating schedule daily — check Navigator). Themed deck parties. Bibbidi Bobbidi Boutique (princess/knight makeovers, additional fee). D Lounge (family karaoke, trivia, games). AquaDunk water slide (on Magic). Alaska-specific: Frozen characters are a major feature on Alaska sailings. Port adventures designed for families including whale watching, dog sled demonstrations, and Native Alaskan cultural experiences.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Movies available other times?</td>
+        <td class="answer"><span class="yes">Yes.</span> FunnelVision shows movies continuously during the day. In-stateroom TV includes Disney+ content, recent theatrical releases, classic Disney animated films, Disney Channel. Occasional theater movie screenings on board.</td>
+      </tr>
+
+      <tr class="section-header"><td colspan="2">What Adults Care About</td></tr>
+      <tr class="data-row">
+        <td class="question">Daily / evening activities</td>
+        <td class="answer">Spa (Senses Spa, adults-only), fitness center, Quiet Cove Pool (adults 18+), Cove Café (adults-only café with specialty coffee, pastries), wine tastings, trivia. Evening: adult entertainment district (After Hours) opens after dinner — Keys piano bar, O'Gills Pub, Fathoms nightclub (dancing). Palo adults-only Italian restaurant (reservation required, additional fee).</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Entertainment (specific shows)</td>
+        <td class="answer">Theater shows in the Walt Disney Theatre (3 productions rotate over the voyage): <strong>Tangled: The Musical</strong> (exclusive to Disney Magic — original new songs from the original composers; highly praised; puppetry for Maximus is remarkable), live deck shows. Alaska-specific: <strong>Frozen Sing-Along Celebration</strong> on the pool deck (with Anna, Elsa, Kristoff — live characters, hosted sing-along). <strong>Mickey &amp; Minnie's Pirates in the Caribbean</strong> debuting fall 2026 on Magic. Broadway Stars Series (West End/Broadway performers on select voyages).</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Timed dinner seatings?</td>
+        <td class="answer"><span class="yes">Yes — Disney uses fixed rotational dining.</span> You're assigned <strong>Early Seating (~5:45pm)</strong> or <strong>Late Seating (~8:00pm)</strong> for the entire voyage. Each night you rotate between the ship's themed restaurants (Lumiere's French brasserie, Rapunzel's Royal Table, Animator's Palate) with the same servers following you. You can request your preference but it's not guaranteed. This is less flexible than other cruise lines — plan accordingly with young kids who may tire early.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Vibe with small children</td>
+        <td class="answer">Disney Magic is the <em>most family-oriented ship in this comparison</em>. Kids are not an afterthought — they are the target audience. Disney staff actively create magic moments (character interactions, surprise deliveries, personalized notes). Alaska sailings have a slightly more adventurous/outdoorsy family demographic than Caribbean sailings, and reviewers describe the vibe as warm and welcoming. The Frozen character experiences (Anna, Elsa, Kristoff) are a massive draw for young kids — multiple reviewers say their kids cried tears of joy meeting Elsa.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Stateroom pluses / minuses</td>
+        <td class="answer"><span class="yes">+</span> <strong>Split bathroom design</strong> (Disney's signature): one room has bathtub + sink, another has toilet + sink — families can use both simultaneously. This is a genuine practical advantage for families with kids. Comfortable beds. Good storage with multiple closets. Disney theming adds charm.<br>
+        <span class="no">−</span> Older ship (1998) — cabins are dated and some storage drawers/doors feel cheap. <strong>Thin walls</strong> — you can hear neighbors. Standard cabins are small. No connecting door option between standard rooms (suites have connecting).</td>
+      </tr>
+
+      <tr class="section-header"><td colspan="2">Tips &amp; Notables</td></tr>
+      <tr class="data-row">
+        <td class="question">Key tips / pluses / minuses</td>
+        <td class="answer">
+          <div class="tip-box">
+            ✅ Tangled: The Musical is exclusive to Disney Magic and is considered one of DCL's best shows — a genuine Broadway-caliber production<br>
+            ✅ Split bathroom design is a game-changer for families — no one waits for the bathroom<br>
+            ✅ FunnelVision movies all day at the pool — kids can watch Disney movies while in the water<br>
+            ✅ Frozen character experiences (Elsa, Anna, Kristoff) on Alaska sailings are unforgettable for young kids<br>
+            ✅ Disney Magic does <strong>variable length sailings</strong> in Alaska (6, 7, 8 nights) — gives more options<br>
+            ⚠️ Fixed dinner seatings (early or late) — less flexible than other lines; early seating fills first, request it during booking<br>
+            ⚠️ Palo reservations open 120 days before sailing for Concierge, 75 days for others — <strong>book immediately when window opens</strong> as it fills completely<br>
+            ⚠️ Most expensive option in this table — Alaska Disney sailings start at ~$2,100/pp inside<br>
+            ❌ Oldest ship in comparison (1998) — noticeably dated cabins compared to newer Disney or other cruise line ships<br>
+            💡 Bring magnetic hooks for the cabin door — stateroom door decorations are a big Disney cruise tradition that kids love
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- ================================================ -->
+  <!-- DISNEY WONDER                                    -->
+  <!-- ================================================ -->
+  <div class="ship-card" id="disney-wonder">
+    <div class="ship-header header-disney">
+      <div>
+        <div style="margin-bottom:5px"><span class="ship-badge badge-disney">Disney Cruise Line</span></div>
+        <h2>Disney Wonder <a href="#compare" class="compare-link">⚖️ Compare to other ships ↑</a></h2>
+      </div>
+      <div class="ship-specs">
+        Built 1999 &nbsp;·&nbsp; 84,130 GT<br>
+        11 passenger decks<br>
+        Capacity: 2,713 guests · 877 staterooms
+      </div>
+      <a class="search-link" href="https://www.alaskacruises.com/cruise-lines/alaska-disney-cruises.html" target="_blank">Search sailings ↗</a>
+    </div>
+    <table class="ship-table">
+      <tr class="section-header"><td colspan="2">General Information</td></tr>
+      <tr class="data-row">
+        <td class="question">Decks / guest capacity</td>
+        <td class="answer">11 passenger decks; 2,713 guests max; 877 staterooms; ~945 crew. Sister ship to Disney Magic (both original 1998–1999 classic ocean-liner design). Wonder is the dedicated Alaska ship for DCL's Vancouver home-port sailings in summer.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Pool heated? Alaska usable?</td>
+        <td class="answer"><span class="yes">Yes — pool water reportedly warm/heated.</span> 3 pools: <strong>Mickey Pool</strong> (1.5ft depth, babies and toddlers 3 months–3 years, very shallow), <strong>Goofy's Family Pool</strong> (family swimming), <strong>Quiet Cove Pool</strong> (adults 18+ only). 4 Jacuzzis. The pool deck is wind-protected. FunnelVision movie screen above Goofy's Pool. Pool deck turns into outdoor movie venue at night (pool covered with deck panels).</td>
+      </tr>
+
+      <tr class="section-header"><td colspan="2">What Kids Care About</td></tr>
+      <tr class="data-row">
+        <td class="question">Can kids roam ship without adult supervision?</td>
+        <td class="answer">Same as Disney Magic. Disney's family culture means the ship is designed to be safe for families, but kids are expected to be supervised or in a youth club. Alaska sailings attract more active, outdoorsy families who are often comfortable with older kids (10+) navigating independently. Teens 11–17 have dedicated teen spaces and substantial freedom.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Kids club self-checkout?</td>
+        <td class="answer">Same as Magic: <span class="no">No</span> by default for Oceaneer Club/Lab (3–10); <span class="yes">Yes</span> for ages 8+ if parents authorize self-checkout. Edge (11–14) and Vibe (14–17) come and go freely.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Kids club activities (Oceaneer Club/Lab)</td>
+        <td class="answer">Same Oceaneer Club/Lab structure as Magic. Alaska-specific activities on Wonder include: <strong>Frozen-themed programming</strong> (Frozen character meet-and-greets with Anna, Elsa, Kristoff), <strong>Anna's Frozen Fun Hunt</strong> (ship-wide scavenger hunt), <strong>Frozen Sing-Along Celebration</strong> on deck (live on upper deck with characters). D Lounge: family games, dancing, interactive shows. The Frozen Alaska theme is more deeply embedded on Wonder than on Magic.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Self-serve ice cream hours</td>
+        <td class="answer"><strong>Eye Scream Treats</strong> pool deck: self-serve, approximately <strong>10:30am–11:00pm</strong>. Same as Magic.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Self-serve pizza/sliders/pasta hours</td>
+        <td class="answer"><strong>Daisy's Pizza Pies</strong>: open approximately through lunch, closes ~6–6:30pm, reopens ~9:30pm–midnight. Same as Magic. Cabanas buffet for other food times.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Self-serve breakfast without adults?</td>
+        <td class="answer"><span class="yes">Yes.</span> Cabanas buffet self-serve from early morning. Same as Magic.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Pool for kids? Movies at pool?</td>
+        <td class="answer">Mickey Pool (1.5ft depth — toddlers and babies only), Goofy's Family Pool (family swimming — main kids pool). AquaDunk small water slide. <strong>FunnelVision screen</strong> shows Disney movies all day above Goofy's Pool. Pool deck covered at night for outdoor movie screenings. <em>Check daily Navigator for schedule.</em> One of the most-loved features on Alaska sailings — watching a Disney movie while soaking in warm pool water with glaciers on the horizon.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Other activities for kids</td>
+        <td class="answer">Frozen character meets (Elsa, Anna, Kristoff — signature to Alaska Wonder sailings), themed deck parties, Bibbidi Bobbidi Boutique, D Lounge, AquaDunk water slide. Alaska excursions for families: whale watching, dog sled demonstrations, Native Alaskan cultural experiences (Tlingit dance and storytelling). Kids love the stateroom door decoration tradition (bring or buy Disney magnet decorations).</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Movies available other times?</td>
+        <td class="answer"><span class="yes">Yes.</span> FunnelVision movies all day. In-stateroom TV: Disney+, recent theatrical movies, Disney animated classics. Evening outdoor deck movies. Same as Magic.</td>
+      </tr>
+
+      <tr class="section-header"><td colspan="2">What Adults Care About</td></tr>
+      <tr class="data-row">
+        <td class="question">Daily / evening activities</td>
+        <td class="answer">Same as Magic: Senses Spa, Cove Café, Quiet Cove Pool (adults 18+), fitness center, wine tastings, trivia. Adult nightlife district: Cadillac Lounge (piano bar), Diversions (sports bar), Wave Bands (entertainment lounge, live music and dancing). Palo Italian restaurant (adults 18+, reservation + additional cost).</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Entertainment (specific shows)</td>
+        <td class="answer">Theater shows in the Buena Vista Theatre: <strong>Frozen, A Musical Spectacular</strong> (large-scale production — the flagship Disney Wonder theater show), <strong>Disney's Aladdin – A Musical Spectacular</strong> (classic stage production with magic carpet illusion), <strong>Disney Dreams: An Enchanted Classic</strong> (Disney character showcase story). Alaska on-deck: <strong>Frozen Sing-Along Celebration</strong> (live outdoor event with Anna, Elsa, Kristoff + interactive audience participation). <strong>Mickey &amp; Minnie's Pirates in the Caribbean</strong> new show arriving spring 2026 on Wonder. Broadway Stars Series on select sailings.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Timed dinner seatings?</td>
+        <td class="answer"><span class="yes">Yes — same fixed rotational system as Magic.</span> Early Seating (~5:45pm) or Late Seating (~8:00pm) for the full voyage. Rotates nightly between: <strong>Triton's</strong> (under-the-sea French/American), <strong>Tiana's Place</strong> (NEW — New Orleans jazz restaurant; described as an absolute highlight with live band and amazing food; guests rave about it), <strong>Animator's Palate</strong> (interactive experience where your drawings come to life). Same servers every night who learn your family's preferences.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Vibe with small children</td>
+        <td class="answer">Disney Wonder on an Alaska sailing is consistently described by reviewers as a "magical, relaxed family vacation" — slightly less crowded and frenetic than Caribbean DCL sailings. The Frozen theme resonates deeply with young kids. Crew warmth is frequently mentioned. Families have described Alaska Wonder as a "bucket list trip" for families with Disney-loving young kids. Reviews note kids crying happy tears meeting Elsa. Even adults without kids love the Alaska scenery. Intimate ship size (2,713 guests) means less crowding than larger ships.</td>
+      </tr>
+      <tr class="data-row">
+        <td class="question">Stateroom pluses / minuses</td>
+        <td class="answer"><span class="yes">+</span> Same split bathroom concept as Magic (toilet separate from tub/shower) — highly practical for families. Comfortable beds. Disney theming. Good storage. Veranda staterooms on Wonder are <em>highly recommended</em> for Alaska — watching glaciers from your private balcony is a top experience cited by reviewers.<br>
+        <span class="no">−</span> Older ship (1999) — cabins feel dated in places. Thin walls. Some reviewers describe the decor as "tired." Standard inside staterooms have no natural light. <em>For Alaska specifically, an inside stateroom is considered a significant drawback — you miss the scenery.</em></td>
+      </tr>
+
+      <tr class="section-header"><td colspan="2">Tips &amp; Notables</td></tr>
+      <tr class="data-row">
+        <td class="question">Key tips / pluses / minuses</td>
+        <td class="answer">
+          <div class="tip-box">
+            ✅ <strong>Tiana's Place</strong> is a new restaurant unique to Wonder — the live jazz band, New Orleans food, and lively atmosphere make it many guests' favorite night of the cruise. Request it early in the voyage.<br>
+            ✅ Frozen characters (Elsa, Anna, Kristoff) on Alaska sailings are a signature Wonder experience — worth the price premium for Frozen-obsessed young kids<br>
+            ✅ Frozen: A Musical Spectacular is a standout production show<br>
+            ✅ Pool water is warm even in Alaska — the FunnelVision movies + warm pool is a beloved combo<br>
+            ✅ Mickey Pool (1.5ft depth) is perfect for babies and toddlers who wouldn't otherwise be safe in a regular pool<br>
+            ⚠️ <strong>Book a Veranda (balcony) stateroom for Alaska if at all possible</strong> — multiple reviewers say an inside cabin on an Alaska cruise means you miss the whole point. The $3,000–$4,000 premium per couple is generally considered worth it for Alaska scenery<br>
+            ⚠️ Palo booking fills immediately when the window opens — set a calendar reminder<br>
+            ⚠️ Character meet lines can be long — check Navigator for posted times and arrive early<br>
+            ❌ Most expensive option in this table: ~$2,100–$2,200/pp for inside; ~$5,200/pp for Veranda<br>
+            💡 Bring magnetic door decorations — stateroom door decorating is a beloved Wonder tradition; kids check everyone's doors daily
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <p style="font-size:0.75rem; color:#888; margin-top:8px; padding-bottom:24px;">
+    Information sourced from official cruise line sites, Cruise Critic reviews, TripAdvisor, DISboards, Royal Caribbean Blog, and cruise review blogs.
+    Compiled July 2026. Verify details before booking — hours, activities, and shows change sailing-to-sailing.
+  </p>
+</div>
+
+<script>
+  // Highlight active nav link based on scroll position
+  const shipCards = document.querySelectorAll('.ship-card');
+  const navLinks = document.querySelectorAll('#sidenav a.ship-link');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        navLinks.forEach(link => {
+          link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+
+  shipCards.forEach(card => observer.observe(card));
+</script>
+
+</body>
+</html>

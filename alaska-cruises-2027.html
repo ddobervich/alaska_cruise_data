@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alaska Cruises – Jul 15 to Aug 7, 2027</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f0f4f8;
+    color: #1a1a2e;
+    padding: 24px;
+  }
+  h1 { font-size: 1.6rem; margin-bottom: 4px; color: #0d3b66; }
+  .subtitle { color: #555; font-size: 0.9rem; margin-bottom: 16px; }
+  .note {
+    background: #fff8e1;
+    border-left: 4px solid #f9a825;
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-size: 0.82rem;
+    color: #5d4037;
+    margin-bottom: 18px;
+    line-height: 1.5;
+  }
+
+  /* ---- Filter area ---- */
+  .filter-bar {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    padding: 14px 16px;
+    margin-bottom: 14px;
+  }
+  .filter-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .filter-row:last-child { margin-bottom: 0; }
+  .filter-group { display: flex; align-items: center; gap: 6px; }
+  .filter-group label { font-size: 0.82rem; font-weight: 600; color: #444; white-space: nowrap; }
+  .filter-group select, .filter-group input[type="number"] {
+    font-size: 0.82rem;
+    padding: 5px 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background: white;
+    cursor: pointer;
+  }
+  .filter-group input[type="number"] { width: 80px; }
+
+  /* Destination filter panel */
+  .dest-panel {
+    border-top: 1px solid #e8eaed;
+    margin-top: 10px;
+    padding-top: 10px;
+  }
+  .dest-toggle-btn {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #0d3b66;
+    background: none;
+    border: 1px solid #b0c4de;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .dest-toggle-btn:hover { background: #eef4fb; }
+  .dest-panel-content {
+    display: none;
+    margin-top: 10px;
+  }
+  .dest-panel-content.open { display: block; }
+  .dest-label {
+    font-size: 0.78rem;
+    color: #555;
+    margin-bottom: 8px;
+  }
+  .dest-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+  }
+  .dest-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.81rem;
+    cursor: pointer;
+    white-space: nowrap;
+    color: #333;
+  }
+  .dest-checkbox-label input { cursor: pointer; accent-color: #0d3b66; }
+  .dest-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .dest-actions button {
+    font-size: 0.76rem;
+    padding: 3px 8px;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    background: #f5f5f5;
+    cursor: pointer;
+  }
+  .dest-actions button:hover { background: #e0e0e0; }
+  .dest-mode-label {
+    font-size: 0.76rem;
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .dest-mode-label select {
+    font-size: 0.76rem;
+    padding: 2px 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  /* Buttons */
+  .btn {
+    font-size: 0.82rem;
+    padding: 5px 12px;
+    border: 1px solid #aaa;
+    border-radius: 5px;
+    background: #eee;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .btn:hover { background: #ddd; }
+  .btn-accent {
+    background: #e8f0fe;
+    border-color: #93b4f0;
+    color: #1a56b0;
+  }
+  .btn-accent:hover { background: #d2e3fc; }
+
+  /* ---- Table ---- */
+  .count { font-size: 0.82rem; color: #666; margin-bottom: 8px; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    font-size: 0.84rem;
+  }
+  thead tr { background: #0d3b66; color: white; }
+  th {
+    padding: 11px 12px;
+    text-align: left;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+  }
+  th:hover { background: #1a5276; }
+  th.no-sort { cursor: default; }
+  th.no-sort:hover { background: #0d3b66; }
+  th .sort-arrow { margin-left: 4px; opacity: 0.5; font-size: 0.75rem; }
+  th.sorted .sort-arrow { opacity: 1; }
+  td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #eef0f3;
+    vertical-align: top;
+    line-height: 1.4;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #f5f9ff; }
+  tr.user-hidden td { display: none; }
+  tr.user-hidden.show-hidden td { display: table-cell; background: #f9f9f9; opacity: 0.5; }
+
+  /* Cruise line color bands */
+  .line-princess td:first-child { border-left: 4px solid #003087; }
+  .line-rc td:first-child { border-left: 4px solid #0073b6; }
+  .line-disney td:first-child { border-left: 4px solid #0066b3; }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .badge-princess { background: #e3eaf8; color: #003087; }
+  .badge-rc { background: #e0f0fa; color: #0073b6; }
+  .badge-disney { background: #e0ecfb; color: #0066b3; }
+
+  .trip-type {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
+  .rt { background: #e8f5e9; color: #2e7d32; }
+  .ow { background: #fff3e0; color: #e65100; }
+
+  .price { font-weight: 600; white-space: nowrap; }
+  .price-low { color: #1b5e20; }
+  .price-med { color: #e65100; }
+  .price-high { color: #c62828; }
+  .no-price { color: #888; font-size: 0.78rem; font-style: italic; }
+  .note-price { color: #666; font-size: 0.76rem; display: block; margin-top: 2px; font-weight: 400; }
+
+  .itinerary { font-size: 0.78rem; color: #555; line-height: 1.5; max-width: 280px; }
+  .itin-ports { color: #333; }
+  .itin-match { background: #fff3cd; border-radius: 2px; padding: 0 1px; }
+
+  a.book-link {
+    display: inline-block;
+    color: #0d3b66;
+    font-size: 0.78rem;
+    text-decoration: none;
+    border-bottom: 1px solid #aac;
+    padding-bottom: 1px;
+  }
+  a.book-link:hover { color: #1565c0; border-color: #1565c0; }
+
+  /* Hide button per row */
+  .hide-btn {
+    background: none;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    color: #aaa;
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .hide-btn:hover { background: #fee; border-color: #f99; color: #c00; }
+  .unhide-btn {
+    background: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    color: #888;
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    cursor: pointer;
+  }
+  .unhide-btn:hover { background: #efffef; border-color: #6c6; color: #363; }
+
+  .row-filter-hidden { display: none; }
+  @media (max-width: 900px) {
+    body { padding: 12px; }
+    .itinerary { max-width: 180px; }
+  }
+</style>
+</head>
+<body>
+
+<h1>⚓ Alaska Cruises — July 15 to August 7, 2027</h1>
+<p class="subtitle">Princess Cruises · Royal Caribbean · Disney Cruise Line &nbsp;|&nbsp; Departures in last 2 weeks of July + first week of August</p>
+
+<div class="note">
+  <strong>Prices:</strong> Per person, double occupancy, including taxes &amp; fees. Sourced from AlaskaCruises.com (third-party booking site). Prices are dynamic — click links to verify current pricing.<br>
+  <strong>Balcony column:</strong> Only select sailings were spot-checked; others say <em>see link</em>. Disney calls balconies "Veranda" staterooms.<br>
+  <strong>Discovery Princess:</strong> Some sailings show Balcony/Oceanview/Suite as cheapest because interior cabins are sold out — noted in table.
+</div>
+
+<!-- Filter bar -->
+<div class="filter-bar">
+  <div class="filter-row">
+    <div class="filter-group">
+      <label for="filterLine">Line:</label>
+      <select id="filterLine" onchange="applyFilters()">
+        <option value="">All lines</option>
+        <option value="Princess">Princess Cruises</option>
+        <option value="Royal Caribbean">Royal Caribbean</option>
+        <option value="Disney">Disney Cruise Line</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label for="filterTrip">Trip type:</label>
+      <select id="filterTrip" onchange="applyFilters()">
+        <option value="">All</option>
+        <option value="Round-trip">Round-trip</option>
+        <option value="One-way">One-way</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label for="filterPort">Homeport:</label>
+      <select id="filterPort" onchange="applyFilters()">
+        <option value="">All ports</option>
+        <option value="Seattle">Seattle</option>
+        <option value="Vancouver">Vancouver</option>
+        <option value="Whittier">Whittier</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label for="maxPrice">Max interior: $</label>
+      <input id="maxPrice" type="number" placeholder="any" min="0" step="100" oninput="applyFilters()">
+    </div>
+    <button class="btn" onclick="clearFilters()">Clear filters</button>
+    <button class="btn btn-accent" id="hiddenToggleBtn" onclick="toggleShowHidden()" style="margin-left:auto"></button>
+  </div>
+
+  <!-- Destination filter -->
+  <div class="dest-panel">
+    <button class="dest-toggle-btn" onclick="toggleDestPanel()">
+      <span id="destToggleArrow">▶</span> Filter by destination
+      <span id="destActiveCount" style="display:none; background:#0d3b66; color:white; border-radius:10px; padding:1px 7px; font-size:0.72rem; margin-left:4px;"></span>
+    </button>
+    <div class="dest-panel-content" id="destPanelContent">
+      <div class="dest-label" style="margin-top:8px;">
+        Show sailings that visit
+        <select id="destMode" onchange="applyFilters()" style="font-size:0.78rem; padding:2px 5px; border:1px solid #ccc; border-radius:4px; margin: 0 2px;">
+          <option value="any">any</option>
+          <option value="all">all</option>
+        </select>
+        of the checked destinations:
+      </div>
+      <div class="dest-grid" id="destGrid">
+        <!-- populated by JS -->
+      </div>
+      <div class="dest-actions">
+        <button onclick="selectAllDests()">Select all</button>
+        <button onclick="clearDests()">Clear all</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="count" id="rowCount"></p>
+
+<div style="overflow-x:auto;">
+<table id="cruiseTable">
+  <thead>
+    <tr>
+      <th onclick="sortTable(0)">Cruise Line <span class="sort-arrow">↕</span></th>
+      <th onclick="sortTable(1)">Ship <span class="sort-arrow">↕</span></th>
+      <th onclick="sortTable(2)">Departure <span class="sort-arrow">↕</span></th>
+      <th onclick="sortTable(3)">Duration &amp; Itinerary <span class="sort-arrow">↕</span></th>
+      <th onclick="sortTable(4)">Trip Type <span class="sort-arrow">↕</span></th>
+      <th onclick="sortTable(5)">Start Port <span class="sort-arrow">↕</span></th>
+      <th onclick="sortTable(6)">End Port <span class="sort-arrow">↕</span></th>
+      <th onclick="sortTable(7)">Interior / Cheapest <span class="sort-arrow">↕</span></th>
+      <th onclick="sortTable(8)">Balcony / Veranda <span class="sort-arrow">↕</span></th>
+      <th class="no-sort">Book</th>
+      <th class="no-sort" style="width:60px; text-align:center;">Hide</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    <!-- ======================== PRINCESS CRUISES ======================== -->
+
+    <tr class="line-princess" data-line="Princess" data-trip="Round-trip" data-port="Seattle" data-interior="1449" data-date="2027-07-17"
+        data-destinations="Juneau|Skagway|Glacier Bay|Ketchikan|Victoria">
+      <td><span class="badge badge-princess">Princess</span></td>
+      <td><a class="book-link" href="alaska-ship-report.html#royal-princess">Royal Princess</a></td>
+      <td>Jul 17, 2027</td>
+      <td>
+        <div><strong>7 nights</strong> — Inside Passage w/ Glacier Bay</div>
+        <div class="itinerary itin-ports">Seattle → Juneau → Skagway → Glacier Bay NP → Ketchikan → Victoria → Seattle</div>
+      </td>
+      <td><span class="trip-type rt">Round-trip</span></td>
+      <td>Seattle, WA</td>
+      <td>Seattle, WA</td>
+      <td><span class="price price-med">$1,449<span class="note-price">Interior</span></span></td>
+      <td><span class="no-price">See link</span></td>
+      <td><a class="book-link" href="https://www.alaskacruises.com/itineraries/7-night-inside-passage-(with-glacier-bay-national-park)-cruise_royal-princess_7-17-2027.html" target="_blank">AlaskaCruises.com ↗</a></td>
+      <td style="text-align:center"><button class="hide-btn" onclick="hideRow(this)">Hide ✕</button></td>
+    </tr>
+
+    <tr class="line-princess" data-line="Princess" data-trip="Round-trip" data-port="Seattle" data-interior="1274" data-date="2027-07-18"
+        data-destinations="Ketchikan|Dawes Glacier|Juneau|Skagway|Victoria">
+      <td><span class="badge badge-princess">Princess</span></td>
+      <td><a class="book-link" href="alaska-ship-report.html#star-princess">Star Princess</a></td>
+      <td>Jul 18, 2027</td>
+      <td>
+        <div><strong>7 nights</strong> — Inside Passage</div>
+        <div class="itinerary itin-ports">Seattle → Ketchikan → Dawes Glacier → Juneau → Skagway → Victoria → Seattle</div>
+      </td>
+      <td><span class="trip-type rt">Round-trip</span></td>
+      <td>Seattle, WA</td>
+      <td>Seattle, WA</td>
+      <td><span class="price price-med">$1,274<span class="note-price">Interior</span></span></td>
+      <td><span class="no-price">See link</span></td>
+      <td><a class="book-link" href="https://www.alaskacruises.com/itineraries/7-night-inside-passage-(roundtrip-seattle)-cruise_star-princess_7-18-2027.html" target="_blank">AlaskaCruises.com ↗</a></td>
+      <td style="text-align:center"><button class="hide-btn" onclick="hideRow(this)">Hide ✕</button></td>
+    </tr>
+
+    <tr class="line-princess" data-line="Princess" data-trip="One-way" data-port="Whittier" data-interior="1049" data-date="2027-07-17"
+        data-destinations="Hubbard Glacier|Glacier Bay|Icy Strait Point|Juneau|Ketchikan">
+      <td><span class="badge badge-princess">Princess</span></td>
+      <td><a class="book-link" href="alaska-ship-report.html#discovery-princess">Discovery Princess</a></td>
+      <td>Jul 17, 2027</td>
+      <td>
+        <div><strong>7 nights</strong> — Voyage of the Glaciers (Southbound)</div>
+        <div class="itinerary itin-ports">Whittier → Hubbard Glacier → Glacier Bay NP → Icy Strait Point → Juneau → Ketchikan → Vancouver</div>
+      </td>
+      <td><span class="trip-type ow">One-way</span></td>
+      <td>Whittier, AK</td>
+      <td>Vancouver, BC</td>
+      <td><span class="price price-med">$1,049<span class="note-price">Balcony (lowest avail.)</span></span></td>
+      <td><span class="price price-med">$1,049<span class="note-price">Lowest available</span></span></td>
+      <td><a class="book-link" href="https://www.alaskacruises.com/itineraries/7-night-voyage-of-the-glaciers-with-glacier-bay-(southbound)-cruise_discovery-princess_7-17-2027.html" target="_blank">AlaskaCruises.com ↗</a></td>
+      <td style="text-align:center"><button class="hide-btn" onclick="hideRow(this)">Hide ✕</button></td>
+    </tr>
+
+    <tr class="line-princess" data-line="Princess" data-trip="One-way" data-port="Vancouver" data-interior="2160" data-date="2027-07-24"
+        data-destinations="Ketchikan|Juneau|Skagway|Glacier Bay|College Fjord">
+      <td><span class="badge badge-princess">Princess</span></td>
+      <td><a class="book-link" href="alaska-ship-report.html#discovery-princess">Discovery Princess</a></td>
+      <td>Jul 24, 2027</td>
+      <td>
+        <div><strong>7 nights</strong> — Voyage of the Glaciers (Northbound)</div>
+        <div class="itinerary itin-ports">Vancouver → Ketchikan → Juneau → Skagway → Glacier Bay NP → College Fjord → Whittier</div>
+      </td>
+      <td><span class="trip-type ow">One-way</span></td>
+      <td>Vancouver, BC</td>
+      <td>Whittier, AK</td>
+      <td><span class="price price-high">$2,160<span class="note-price">Oceanview (lowest avail.)</span></span></td>
+      <td><span class="no-price">See link</span></td>
+      <td><a class="book-link" href="https://www.alaskacruises.com/itineraries/7-night-voyage-of-the-glaciers-northbound-cruise_discovery-princess_7-24-2027.html" target="_blank">AlaskaCruises.com ↗</a></td>
+      <td style="text-align:center"><button class="hide-btn" onclick="hideRow(this)">Hide ✕</button></td>
+    </tr>
+
+    <tr class="line-princess" data-line="Princess" data-trip="Round-trip" data-port="Seattle" data-interior="1449" data-date="2027-07-24"
+        data-destinations="Juneau|Skagway|Glacier Bay|Ketchikan|Victoria">
+      <td><span class="badge badge-princess">Princess</span></td>
+      <td><a class="book-link" href="alaska-ship-report.html#royal-princess">Royal Princess</a></td>
+      <td>Jul 24, 2027</td>
+      <td>
+        <div><strong>7 nights</strong> — Inside Passage w/ Glacier Bay</div>
+        <div class="itinerary itin-ports">Seattle → Juneau → Skagway → Glacier Bay NP → Ketchikan → Victoria → Seattle</div>
+      </td>
+      <td><span class="trip-type rt">Round-trip</span></td>
+      <td>Seattle, WA</td>
+      <td>Seattle, WA</td>
+      <td><span class="price price-med">$1,449<span class="note-price">Interior</span></span></td>
+      <td><span class="no-price">See link</span></td>
+      <td><a class="book-link" href="https://www.alaskacruises.com/itineraries/7-night-inside-passage-(with-glacier-bay-national-park)-cruise_royal-princess_7-24-2027.html" target="_blank">AlaskaCruises.com ↗</a></td>
+      <td style="text-align:center"><button class="hide-btn" onclick="hideRow(this)">Hide ✕</button></td>
+    </tr>
+
+    <tr class="line-princess" data-line="Princess" data-trip="Round-trip" data-port="Seattle" data-interior="1274" data-date="2027-07-25"
+        data-destinations="Ketchikan|Dawes Glacier|Juneau|Skagway|Victoria">
+      <td><span class="badge badge-princess">Princess</span></td>
+      <td><a class="book-link" href="alaska-ship-report.html#star-princess">Star Princess</a></td>
+      <td>Jul 25, 2027</td>
+      <td>
+        <div><strong>7 nights</strong> — Inside Passage</div>
+        <div class="itinerary itin-ports">Seattle → Ketchikan → Dawes Glacier → Juneau → Skagway → Victoria → Seattle</div>
+      </td>
+      <td><span class="trip-type rt">Round-trip</span></td>
+      <td>Seattle, WA</td>
+      <td>Seattle, WA</td>
+      <td><span class="price price-med">$1,274<span class="note-price">Interior</span></span></td>
+      <td><span class="no-price">See link</span></td>
+      <td><a class="book-link" href="https://www.alaskacruises.com/itineraries/7-night-inside-passage-(roundtrip-seattle)-cruise_star-princess_7-25-2027.html" target="_blank">AlaskaCruises.com ↗</a></td>
+      <td style="text-align:center"><button class="hide-btn" onclick="hideRow(this)">Hide ✕</button></td>
+    </tr>
+
+    <tr class="line-princess" data-line="Princess" data-trip="Round-trip" data-port="Seattle" data-interior="1449" data-date="2027-07-31"
+        data-destinations="Juneau|Skagway|Glacier Bay|Ketchikan|Victoria">
+      <td><span class="badge badge-princess">Princess</span></td>
+      <td><a class="book-link" href="alaska-ship-report.html#royal-princess">Royal Princess</a></td>
+      <td>Jul 31, 2027</td>
+      <td>
+        <div><strong>7 nights</strong> — Inside Passage w/ Glacier Bay</div>
+        <div class="itinerary itin-ports">Seattle → Juneau → Skagway → Glacier Bay NP → Ketchikan → Victoria → Seattle</div>
+      </td>
+      <td><span class="trip-type rt">Round-trip</span></td>
+      <td>Seattle, WA</td>
+      <td>Seattle, WA</td>
+      <td><span class="price price-med">$1,449<span class="note-price">Interior</span></span></td>
+      <td><span class="no-price">See link</span></td>
+      <td><a class="book-link" href="https://www.alaskacruises.com/itineraries/7-night-inside-passage-(with-glacier-bay-national-park)-cruise_royal-princess_7-31-2027.html" target="_blank">AlaskaCruises.com ↗</a></td>
+      <td style="text-align:center"><button class="hide-btn" onclick="hideRow(this)">Hide ✕</button></td>
+    </tr>
+
+    <tr class="line-princess" data-line="Princess" data-trip="One-way" data-port="Whittier" data-interior="999" data-date="2027-07-31"
+        data-destinations="Hubbard Glacier|Glacier Bay|Icy Strait Point|Juneau|Ketchikan">
+      <td><span class="badge badge-princess">Princess</span></td>
+      <td><a class="book-link" href="alaska-ship-report.html#discovery-princess">Discovery Princess</a></td>
+      <td>Jul 31, 2027</td>
+      <td>
+        <div><strong>7 nights</strong> — Voyage of the Glaciers (Southbound)</div>
+        <div class="itinerary itin-ports">Whittier → Hubbard Glacier → Glacier Bay NP → Icy Strait Point → Juneau → Ketchikan → Vancouver</div>
+      </td>
+      <td><span class="trip-type ow">One-way</span></td>
+      <td>Whittier, AK</td>
+      <td>Vancouver, BC</td>
+      <td><span class="price price-low">$999<span class="note-price">Suite (lowest avail.)</span></span></td>
+      <td><span class="no-price">See link</span></td>
+      <td><a class="book-link" href="https://www.alaskacruises.com/itineraries/7-night-voyage-of-the-glaciers-with-glacier-bay-(southbound)-cruise_discovery-princess_7-31-2027.html" target="_blank">AlaskaCruises.com ↗</a></td>
+      <td style="text-align:center"><button class="hide-btn" onclick="hideRow(this)">Hide ✕</button></td>
+    </tr>
+
+    <tr class="line-princess" data-line="Princess" data-trip="Round-trip" data-port="Seattle" data-interior="1174" data-date="2027-08-01"
+        data-destinations="Ketchikan|Dawes Glacier|Juneau|Skagway|Victoria">
+      <td><span class="badge badge-princess">Princess</span></td>
+      <td><a class="book-link" href="alaska-ship-report.html#star-princess">Star Princess</a></td>
+      <td>Aug 1, 2027</td>
+      <td>
+        <div><strong>7 nights</strong> — Inside Passage</div>
+        <div class="itinerary itin-ports">Seattle → Ketchikan → Dawes Glacier → Juneau → Skagway → Victoria → Seattle</div>
+      </td>
+      <td><span class="trip-type rt">Round-trip</span></td>
+      <td>Seattle, WA</td>
+      <td>Seattle, WA</td>
+      <td><span class="price price-med">$1,174<span class="note-price">Interior</span></span></td>
+      <td><span class="no-price">See link</span></td>
+      <td><a class="book-link" href="https://www.alaskacruises.com/itineraries/7-night-inside-passage-(roundtrip-seattle)-cruise_star-princess_8-1-2027.html" target="_blank">AlaskaCruises.com ↗</a></td>
+      <td style="text-align:center"><button class="hide-btn" onclick="hideRow(this)">Hide ✕</button></td>
+    </tr>
+
+    <!-- ======================== ROYAL CARIBBEAN ======================== -->
+
+    <tr class="line-rc" data-line="Royal Caribbean" data-trip="Round-trip" data-port="Seattle" data-interior="828" data-date="2027-07-16"
+        data-destinations="Juneau|Skagway|Dawes Glacier|Victoria">
+      <td><span class="badge badge-rc">Royal Caribbean</span></td>
+      <td><a class="book-link" href="alaska-ship-report.html#voyager-of-the-seas">Voyager of the Seas</a></td>
+      <td>Jul 16, 2027</td>
+      <td>
+        <div><strong>7 nights</strong> — Alaska Adventure</div>
+        <div class="itinerary itin-ports">Seattle → Juneau → Skagway → Dawes Glacier → Victoria → Seattle</div>
+      </td>
+      <td><span class="trip-type rt">Round-trip</span></td>
+      <td>Seattle, WA</td>
+      <td>Seattle, WA</td>
+      <td><span class="price price-low">$828<span class="note-price">Interior</span></span></td>
+      <td><span class="no-price">See link</span></td>
+      <td><a class="book-link" href="https://www.alaskacruises.com/itineraries/7-night-alaska-adventure-cruise_voyager-of-the-seas_7-16-2027.html" target="_blank">AlaskaCruises.com ↗</a></td>
+      <td style="text-align:center"><button class="hide-btn" onclick="hideRow(this)">Hide ✕</button></td>
+    </tr>
+
+    <tr class="line-rc" data-line="Royal Caribbean" data-trip="Round-trip" data-port="Vancouver" data-interior="960" data-date="2027-07-18"
+        data-destinations="Tracy Arm Fjord|Juneau|Icy Strait Point|Sitka|Ketchikan">
+      <td><span class="badge badge-rc">Royal Caribbean</span></td>
+      <td><a class="book-link" href="alaska-ship-report.html#serenade-of-the-seas">Serenade of the Seas</a></td>
+      <td>Jul 18, 2027</td>
+      <td>
+        <div><strong>7 nights</strong> — Alaska Inside Passage</div>
+        <div class="itinerary itin-ports">Vancouver → Tracy Arm Fjord → Juneau → Icy Strait Point → Sitka → Ketchikan → Vancouver</div>
+      </td>
+      <td><span class="trip-type rt">Round-trip</span></td>
+      <td>Vancouver, BC</td>
+      <td>Vancouver, BC</td>
+      <td><span class="price price-low">$960<span class="note-price">Interior</span></span></td>
+      <td><span class="no-price">See link</span></td>
+      <td><a class="book-link" href="https://www.alaskacruises.com/itineraries/7-night-alaska-inside-passage-cruise_serenade-of-the-seas_7-18-2027.html" target="_blank">AlaskaCruises.com ↗</a></td>
+      <td style="text-align:center"><button class="hide-btn" onclick="hideRow(this)">Hide ✕</button></td>
+    </tr>
+
+    <tr class="line-rc" data-line="Royal Caribbean" data-trip="Round-trip" data-port="Seattle" data-interior="1332" data-date="2027-07-19"
+        data-destinations="Sitka|Skagway|Dawes Glacier|Juneau|Victoria">
+      <td><span class="badge badge-rc">Royal Caribbean</span></td>
+      <td><a class="book-link" href="alaska-ship-report.html#quantum-of-the-seas">Quantum of the Seas</a></td>
+      <td>Jul 19, 2027</td>
+      <td>
+        <div><strong>7 nights</strong> — Alaska Adventure</div>
+        <div class="itinerary itin-ports">Seattle → Sitka → Skagway → Dawes Glacier → Juneau → Victoria → Seattle</div>
+      </td>
+      <td><span class="trip-type rt">Round-trip</span></td>
+      <td>Seattle, WA</td>
+      <td>Seattle, WA</td>
+      <td><span class="price price-med">$1,332<span class="note-price">Interior</span></span></td>
+      <td><span class="no-price">See link</span></td>
+      <td><a class="book-link" href="https://www.alaskacruises.com/itineraries/7-night-alaska-adventure-cruise_quantum-of-the-seas_7-19-2027.html" target="_blank">AlaskaCruises.com ↗</a></td>
+      <td style="text-align:center"><button class="hide-btn" onclick="hideRow(this)">Hide ✕</button></td>
+    </tr>
+
+    <tr class="line-rc" data-line="Royal Caribbean" data-trip="Round-trip" data-port="Seattle" data-interior="828" data-date="2027-07-23"
+        data-destinations="Juneau|Skagway|Dawes Glacier|Victoria">
+      <td><span class="badge badge-rc">Royal Caribbean</span></td>
+      <td><a class="book-link" href="alaska-ship-report.html#voyager-of-the-seas">Voyager of the Seas</a></td>
+      <td>Jul 23, 2027</td>
+      <td>
+        <div><strong>7 nights</strong> — Alaska Adventure</div>
+        <div class="itinerary itin-ports">Seattle → Juneau → Skagway → Dawes Glacier → Victoria → Seattle</div>
+      </td>
+      <td><span class="trip-type rt">Round-trip</span></td>
+      <td>Seattle, WA</td>
+      <td>Seattle, WA</td>
+      <td><span class="price price-low">$828<span class="note-price">Interior</span></span></td>
+      <td><span class="no-price">See link</span></td>
+      <td><a class="book-link" href="https://www.alaskacruises.com/itineraries/7-night-alaska-adventure-cruise_voyager-of-the-seas_7-23-2027.html" target="_blank">AlaskaCruises.com ↗</a></td>
+      <td style="text-align:center"><button class="hide-btn" onclick="hideRow(this)">Hide ✕</button></td>
+    </tr>
+
+    <tr class="line-rc" data-line="Royal Caribbean" data-trip="Round-trip" data-port="Vancouver" data-interior="861" data-date="2027-07-25"
+        data-destinations="Sitka|Tracy Arm Fjord|Juneau|Ketchikan|Prince Rupert">
+      <td><span class="badge badge-rc">Royal Caribbean</span></td>
+      <td><a class="book-link" href="alaska-ship-report.html#serenade-of-the-seas">Serenade of the Seas</a></td>
+      <td>Jul 25, 2027</td>
+      <td>
+        <div><strong>7 nights</strong> — Alaska Inside Passage</div>
+        <div class="itinerary itin-ports">Vancouver → Sitka → Tracy Arm Fjord → Juneau → Ketchikan → Prince Rupert → Vancouver</div>
+      </td>
+      <td><span class="trip-type rt">Round-trip</span></td>
+      <td>Vancouver, BC</td>
+      <td>Vancouver, BC</td>
+      <td><span class="price price-low">$861<span class="note-price">Interior</span></span></td>
+      <td><span class="no-price">See link</span></td>
+      <td><a class="book-link" href="https://www.alaskacruises.com/itineraries/7-night-alaska-inside-passage-cruise_serenade-of-the-seas_7-25-2027.html" target="_blank">AlaskaCruises.com ↗</a></td>
+      <td style="text-align:center"><button class="hide-btn" onclick="hideRow(this)">Hide ✕</button></td>
+    </tr>
+
+    <tr class="line-rc" data-line="Royal Caribbean" data-trip="Round-trip" data-port="Seattle" data-interior="1266" data-date="2027-07-26"
+        data-destinations="Sitka|Skagway|Dawes Glacier|Juneau|Victoria">
+      <td><span class="badge badge-rc">Royal Caribbean</span></td>
+      <td><a class="book-link" href="alaska-ship-report.html#quantum-of-the-seas">Quantum of the Seas</a></td>
+      <td>Jul 26, 2027</td>
+      <td>
+        <div><strong>7 nights</strong> — Alaska Adventure</div>
+        <div class="itinerary itin-ports">Seattle → Sitka → Skagway → Dawes Glacier → Juneau → Victoria → Seattle</div>
+      </td>
+      <td><span class="trip-type rt">Round-trip</span></td>
+      <td>Seattle, WA</td>
+      <td>Seattle, WA</td>
+      <td><span class="price price-med">$1,266<span class="note-price">Interior</span></span></td>
+      <td><span class="price price-med">$1,798<span class="note-price">Balcony</span></span></td>
+      <td><a class="book-link" href="https://www.alaskacruises.com/itineraries/7-night-alaska-adventure-cruise_quantum-of-the-seas_7-26-2027.html" target="_blank">AlaskaCruises.com ↗</a></td>
+      <td style="text-align:center"><button class="hide-btn" onclick="hideRow(this)">Hide ✕</button></td>
+    </tr>
+
+    <tr class="line-rc" data-line="Royal Caribbean" data-trip="Round-trip" data-port="Seattle" data-interior="817" data-date="2027-07-30"
+        data-destinations="Juneau|Skagway|Dawes Glacier|Victoria">
+      <td><span class="badge badge-rc">Royal Caribbean</span></td>
+      <td><a class="book-link" href="alaska-ship-report.html#voyager-of-the-seas">Voyager of the Seas</a></td>
+      <td>Jul 30, 2027</td>
+      <td>
+        <div><strong>7 nights</strong> — Alaska Adventure</div>
+        <div class="itinerary itin-ports">Seattle → Juneau → Skagway → Dawes Glacier → Victoria → Seattle</div>
+      </td>
+      <td><span class="trip-type rt">Round-trip</span></td>
+      <td>Seattle, WA</td>
+      <td>Seattle, WA</td>
+      <td><span class="price price-low">$817<span class="note-price">Interior</span></span></td>
+      <td><span class="no-price">See link</span></td>
+      <td><a class="book-link" href="https://www.alaskacruises.com/itineraries/7-night-alaska-adventure-cruise_voyager-of-the-seas_7-30-2027.html" target="_blank">AlaskaCruises.com ↗</a></td>
+      <td style="text-align:center"><button class="hide-btn" onclick="hideRow(this)">Hide ✕</button></td>
+    </tr>
+
+    <tr class="line-rc" data-line="Royal Caribbean" data-trip="Round-trip" data-port="Vancouver" data-interior="914" data-date="2027-08-01"
+        data-destinations="Tracy Arm Fjord|Juneau|Icy Strait Point|Sitka|Ketchikan">
+      <td><span class="badge badge-rc">Royal Caribbean</span></td>
+      <td><a class="book-link" href="alaska-ship-report.html#serenade-of-the-seas">Serenade of the Seas</a></td>
+      <td>Aug 1, 2027</td>
+      <td>
+        <div><strong>7 nights</strong> — Alaska Inside Passage</div>
+        <div class="itinerary itin-ports">Vancouver → Tracy Arm Fjord → Juneau → Icy Strait Point → Sitka → Ketchikan → Vancouver</div>
+      </td>
+      <td><span class="trip-type rt">Round-trip</span></td>
+      <td>Vancouver, BC</td>
+      <td>Vancouver, BC</td>
+      <td><span class="price price-low">$914<span class="note-price">Interior</span></span></td>
+      <td><span class="no-price">See link</span></td>
+      <td><a class="book-link" href="https://www.alaskacruises.com/itineraries/7-night-alaska-inside-passage-cruise_serenade-of-the-seas_8-1-2027.html" target="_blank">AlaskaCruises.com ↗</a></td>
+      <td style="text-align:center"><button class="hide-btn" onclick="hideRow(this)">Hide ✕</button></td>
+    </tr>
+
+    <tr class="line-rc" data-line="Royal Caribbean" data-trip="Round-trip" data-port="Seattle" data-interior="1237" data-date="2027-08-02"
+        data-destinations="Sitka|Skagway|Dawes Glacier|Juneau|Victoria">
+      <td><span class="badge badge-rc">Royal Caribbean</span></td>
+      <td><a class="book-link" href="alaska-ship-report.html#quantum-of-the-seas">Quantum of the Seas</a></td>
+      <td>Aug 2, 2027</td>
+      <td>
+        <div><strong>7 nights</strong> — Alaska Adventure</div>
+        <div class="itinerary itin-ports">Seattle → Sitka → Skagway → Dawes Glacier → Juneau → Victoria → Seattle</div>
+      </td>
+      <td><span class="trip-type rt">Round-trip</span></td>
+      <td>Seattle, WA</td>
+      <td>Seattle, WA</td>
+      <td><span class="price price-med">$1,237<span class="note-price">Interior</span></span></td>
+      <td><span class="no-price">See link</span></td>
+      <td><a class="book-link" href="https://www.alaskacruises.com/itineraries/7-night-alaska-adventure-cruise_quantum-of-the-seas_8-2-2027.html" target="_blank">AlaskaCruises.com ↗</a></td>
+      <td style="text-align:center"><button class="hide-btn" onclick="hideRow(this)">Hide ✕</button></td>
+    </tr>
+
+    <!-- ======================== DISNEY CRUISE LINE ======================== -->
+
+    <tr class="line-disney" data-line="Disney" data-trip="Round-trip" data-port="Vancouver" data-interior="2110" data-date="2027-07-15"
+        data-destinations="Stikine Icecap|Skagway|Icy Strait Point|Ketchikan">
+      <td><span class="badge badge-disney">Disney</span></td>
+      <td><a class="book-link" href="alaska-ship-report.html#disney-magic">Disney Magic</a></td>
+      <td>Jul 15, 2027</td>
+      <td>
+        <div><strong>7 nights</strong> — Alaska</div>
+        <div class="itinerary itin-ports">Vancouver → Stikine Icecap → Skagway → Icy Strait Point → Ketchikan → Vancouver</div>
+      </td>
+      <td><span class="trip-type rt">Round-trip</span></td>
+      <td>Vancouver, BC</td>
+      <td>Vancouver, BC</td>
+      <td><span class="price price-high">$2,110<span class="note-price">Inside</span></span></td>
+      <td><span class="no-price">See link</span></td>
+      <td><a class="book-link" href="https://www.alaskacruises.com/itineraries/7-night-alaska-cruise_disney-magic_7-15-2027.html" target="_blank">AlaskaCruises.com ↗</a></td>
+      <td style="text-align:center"><button class="hide-btn" onclick="hideRow(this)">Hide ✕</button></td>
+    </tr>
+
+    <tr class="line-disney" data-line="Disney" data-trip="Round-trip" data-port="Vancouver" data-interior="2131" data-date="2027-07-19"
+        data-destinations="Stikine Icecap|Skagway|Juneau|Ketchikan">
+      <td><span class="badge badge-disney">Disney</span></td>
+      <td><a class="book-link" href="alaska-ship-report.html#disney-wonder">Disney Wonder</a></td>
+      <td>Jul 19, 2027</td>
+      <td>
+        <div><strong>7 nights</strong> — Alaska</div>
+        <div class="itinerary itin-ports">Vancouver → Stikine Icecap → Skagway → Juneau → Ketchikan → Vancouver</div>
+      </td>
+      <td><span class="trip-type rt">Round-trip</span></td>
+      <td>Vancouver, BC</td>
+      <td>Vancouver, BC</td>
+      <td><span class="price price-high">$2,131<span class="note-price">Inside</span></span></td>
+      <td><span class="no-price">See link</span></td>
+      <td><a class="book-link" href="https://www.alaskacruises.com/itineraries/7-night-alaska-cruise_disney-wonder_7-19-2027.html" target="_blank">AlaskaCruises.com ↗</a></td>
+      <td style="text-align:center"><button class="hide-btn" onclick="hideRow(this)">Hide ✕</button></td>
+    </tr>
+
+    <tr class="line-disney" data-line="Disney" data-trip="Round-trip" data-port="Vancouver" data-interior="2488" data-date="2027-07-22"
+        data-destinations="Stikine Icecap|Skagway|Icy Strait Point|Sitka|Ketchikan">
+      <td><span class="badge badge-disney">Disney</span></td>
+      <td><a class="book-link" href="alaska-ship-report.html#disney-magic">Disney Magic</a></td>
+      <td>Jul 22, 2027</td>
+      <td>
+        <div><strong>8 nights</strong> — Alaska</div>
+        <div class="itinerary itin-ports">Vancouver → Stikine Icecap → Skagway → Icy Strait Point → Sitka → Ketchikan → Vancouver</div>
+      </td>
+      <td><span class="trip-type rt">Round-trip</span></td>
+      <td>Vancouver, BC</td>
+      <td>Vancouver, BC</td>
+      <td><span class="price price-high">$2,488<span class="note-price">Inside</span></span></td>
+      <td><span class="no-price">See link</span></td>
+      <td><a class="book-link" href="https://www.alaskacruises.com/itineraries/8-night-alaska-cruise_disney-magic_7-22-2027.html" target="_blank">AlaskaCruises.com ↗</a></td>
+      <td style="text-align:center"><button class="hide-btn" onclick="hideRow(this)">Hide ✕</button></td>
+    </tr>
+
+    <tr class="line-disney" data-line="Disney" data-trip="Round-trip" data-port="Vancouver" data-interior="2201" data-date="2027-07-26"
+        data-destinations="Stikine Icecap|Skagway|Juneau|Ketchikan">
+      <td><span class="badge badge-disney">Disney</span></td>
+      <td><a class="book-link" href="alaska-ship-report.html#disney-wonder">Disney Wonder</a></td>
+      <td>Jul 26, 2027</td>
+      <td>
+        <div><strong>7 nights</strong> — Alaska</div>
+        <div class="itinerary itin-ports">Vancouver → Stikine Icecap → Skagway → Juneau → Ketchikan → Vancouver</div>
+      </td>
+      <td><span class="trip-type rt">Round-trip</span></td>
+      <td>Vancouver, BC</td>
+      <td>Vancouver, BC</td>
+      <td><span class="price price-high">$2,201<span class="note-price">Inside</span></span></td>
+      <td><span class="price price-high">$5,211<span class="note-price">Veranda (Balcony)</span></span></td>
+      <td><a class="book-link" href="https://www.alaskacruises.com/itineraries/7-night-alaska-cruise_disney-wonder_7-26-2027.html" target="_blank">AlaskaCruises.com ↗</a></td>
+      <td style="text-align:center"><button class="hide-btn" onclick="hideRow(this)">Hide ✕</button></td>
+    </tr>
+
+    <tr class="line-disney" data-line="Disney" data-trip="Round-trip" data-port="Vancouver" data-interior="1792" data-date="2027-07-30"
+        data-destinations="Stikine Icecap|Icy Strait Point|Ketchikan">
+      <td><span class="badge badge-disney">Disney</span></td>
+      <td><a class="book-link" href="alaska-ship-report.html#disney-magic">Disney Magic</a></td>
+      <td>Jul 30, 2027</td>
+      <td>
+        <div><strong>6 nights</strong> — Alaska</div>
+        <div class="itinerary itin-ports">Vancouver → Stikine Icecap → Icy Strait Point → Ketchikan → Vancouver</div>
+      </td>
+      <td><span class="trip-type rt">Round-trip</span></td>
+      <td>Vancouver, BC</td>
+      <td>Vancouver, BC</td>
+      <td><span class="price price-high">$1,792<span class="note-price">Inside</span></span></td>
+      <td><span class="no-price">See link</span></td>
+      <td><a class="book-link" href="https://www.alaskacruises.com/itineraries/6-night-alaska-cruise_disney-magic_7-30-2027.html" target="_blank">AlaskaCruises.com ↗</a></td>
+      <td style="text-align:center"><button class="hide-btn" onclick="hideRow(this)">Hide ✕</button></td>
+    </tr>
+
+  </tbody>
+</table>
+</div>
+
+<p style="font-size:0.75rem; color:#888; margin-top:14px;">
+  Prices sourced from AlaskaCruises.com (third-party booking site) · Per person, double occupancy, including taxes &amp; fees · Retrieved July 2026 · Verify before booking.
+</p>
+
+<script>
+  // ---- State ----
+  let sortDir = {};
+  let showingHidden = false;
+
+  // ---- Destination checkboxes: build from data ----
+  function buildDestGrid() {
+    const rows = document.querySelectorAll('#cruiseTable tbody tr');
+    const destSet = new Set();
+    rows.forEach(r => {
+      (r.dataset.destinations || '').split('|').forEach(d => { if (d) destSet.add(d.trim()); });
+    });
+    const sorted = [...destSet].sort();
+    const grid = document.getElementById('destGrid');
+    grid.innerHTML = '';
+    sorted.forEach(dest => {
+      const lbl = document.createElement('label');
+      lbl.className = 'dest-checkbox-label';
+      lbl.innerHTML = `<input type="checkbox" value="${dest}" onchange="applyFilters()"> ${dest}`;
+      grid.appendChild(lbl);
+    });
+  }
+
+  function getCheckedDests() {
+    return [...document.querySelectorAll('#destGrid input:checked')].map(i => i.value);
+  }
+
+  function selectAllDests() {
+    document.querySelectorAll('#destGrid input').forEach(i => i.checked = true);
+    applyFilters();
+  }
+  function clearDests() {
+    document.querySelectorAll('#destGrid input').forEach(i => i.checked = false);
+    applyFilters();
+  }
+
+  function toggleDestPanel() {
+    const content = document.getElementById('destPanelContent');
+    const arrow = document.getElementById('destToggleArrow');
+    const open = content.classList.toggle('open');
+    arrow.textContent = open ? '▼' : '▶';
+  }
+
+  // ---- Row hide/show ----
+  function hideRow(btn) {
+    const row = btn.closest('tr');
+    row.classList.add('user-hidden');
+    if (showingHidden) row.classList.add('show-hidden');
+    // swap to unhide button
+    btn.textContent = 'Show ↩';
+    btn.className = 'unhide-btn';
+    btn.onclick = function() { unhideRow(this); };
+    updateHiddenBtn();
+    updateCount();
+  }
+
+  function unhideRow(btn) {
+    const row = btn.closest('tr');
+    row.classList.remove('user-hidden', 'show-hidden');
+    btn.textContent = 'Hide ✕';
+    btn.className = 'hide-btn';
+    btn.onclick = function() { hideRow(this); };
+    updateHiddenBtn();
+    updateCount();
+  }
+
+  function toggleShowHidden() {
+    showingHidden = !showingHidden;
+    document.querySelectorAll('tr.user-hidden').forEach(r => {
+      r.classList.toggle('show-hidden', showingHidden);
+    });
+    updateHiddenBtn();
+    updateCount();
+  }
+
+  function updateHiddenBtn() {
+    const count = document.querySelectorAll('tr.user-hidden').length;
+    const btn = document.getElementById('hiddenToggleBtn');
+    if (count === 0) {
+      btn.style.display = 'none';
+    } else {
+      btn.style.display = '';
+      btn.textContent = showingHidden
+        ? `Re-hide ${count} hidden row${count !== 1 ? 's' : ''}`
+        : `Show ${count} hidden row${count !== 1 ? 's' : ''}`;
+    }
+  }
+
+  // ---- Main filter ----
+  function applyFilters() {
+    const line    = document.getElementById('filterLine').value.toLowerCase();
+    const trip    = document.getElementById('filterTrip').value.toLowerCase();
+    const port    = document.getElementById('filterPort').value.toLowerCase();
+    const maxP    = parseFloat(document.getElementById('maxPrice').value) || Infinity;
+    const checked = getCheckedDests();
+    const mode    = document.getElementById('destMode').value; // 'any' or 'all'
+
+    const rows = document.querySelectorAll('#cruiseTable tbody tr');
+    rows.forEach(row => {
+      const rLine  = (row.dataset.line || '').toLowerCase();
+      const rTrip  = (row.dataset.trip || '').toLowerCase();
+      const rPort  = (row.dataset.port || '').toLowerCase();
+      const rInt   = parseFloat(row.dataset.interior) || 0;
+      const rDests = (row.dataset.destinations || '').split('|').map(d => d.trim());
+
+      let destMatch = true;
+      if (checked.length > 0) {
+        if (mode === 'any') {
+          destMatch = checked.some(d => rDests.includes(d));
+        } else {
+          destMatch = checked.every(d => rDests.includes(d));
+        }
+      }
+
+      const filterPass = (
+        (!line || rLine.includes(line)) &&
+        (!trip || rTrip === trip) &&
+        (!port || rPort.includes(port)) &&
+        (rInt <= maxP) &&
+        destMatch
+      );
+
+      row.classList.toggle('row-filter-hidden', !filterPass);
+    });
+
+    // Highlight matched destinations in itinerary text
+    highlightDests(checked);
+    updateDestBadge(checked.length);
+    updateCount();
+  }
+
+  function highlightDests(checked) {
+    document.querySelectorAll('.itin-ports').forEach(el => {
+      let html = el.textContent;
+      if (checked.length === 0) {
+        el.innerHTML = html;
+        return;
+      }
+      // escape for regex
+      const escaped = checked.map(d => d.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+      const re = new RegExp(`(${escaped.join('|')})`, 'gi');
+      el.innerHTML = html.replace(re, '<span class="itin-match">$1</span>');
+    });
+  }
+
+  function updateDestBadge(count) {
+    const badge = document.getElementById('destActiveCount');
+    if (count > 0) {
+      badge.style.display = '';
+      badge.textContent = count;
+    } else {
+      badge.style.display = 'none';
+    }
+  }
+
+  function updateCount() {
+    const rows = document.querySelectorAll('#cruiseTable tbody tr');
+    let visible = 0;
+    rows.forEach(r => {
+      const hiddenByFilter = r.classList.contains('row-filter-hidden');
+      const hiddenByUser   = r.classList.contains('user-hidden') && !r.classList.contains('show-hidden');
+      if (!hiddenByFilter && !hiddenByUser) visible++;
+    });
+    document.getElementById('rowCount').textContent = `Showing ${visible} sailing${visible !== 1 ? 's' : ''}`;
+  }
+
+  function clearFilters() {
+    document.getElementById('filterLine').value = '';
+    document.getElementById('filterTrip').value = '';
+    document.getElementById('filterPort').value = '';
+    document.getElementById('maxPrice').value = '';
+    clearDests();
+    applyFilters();
+  }
+
+  // ---- Sort ----
+  function sortTable(colIdx) {
+    const tbody = document.querySelector('#cruiseTable tbody');
+    const rows  = Array.from(tbody.querySelectorAll('tr'));
+    const dir   = (sortDir[colIdx] === 'asc') ? 'desc' : 'asc';
+    sortDir = {};
+    sortDir[colIdx] = dir;
+
+    rows.sort((a, b) => {
+      let aVal = a.cells[colIdx]?.textContent.trim() || '';
+      let bVal = b.cells[colIdx]?.textContent.trim() || '';
+      if (colIdx === 7 || colIdx === 8) {
+        const parse = s => parseFloat(s.replace(/[^0-9.]/g, '')) || (dir === 'asc' ? Infinity : -Infinity);
+        return dir === 'asc' ? parse(aVal) - parse(bVal) : parse(bVal) - parse(aVal);
+      }
+      if (colIdx === 2) {
+        return dir === 'asc' ? new Date(aVal) - new Date(bVal) : new Date(bVal) - new Date(aVal);
+      }
+      return dir === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+    });
+
+    rows.forEach(r => tbody.appendChild(r));
+    document.querySelectorAll('th').forEach((th, i) => {
+      th.classList.toggle('sorted', i === colIdx);
+      const arrow = th.querySelector('.sort-arrow');
+      if (arrow) arrow.textContent = i === colIdx ? (dir === 'asc' ? '↑' : '↓') : '↕';
+    });
+  }
+
+  // ---- Init ----
+  buildDestGrid();
+  updateHiddenBtn();
+  updateCount();
+</script>
+
+</body>
+</html>
