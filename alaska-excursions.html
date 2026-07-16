@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shore Excursions ≤ $200/person — Alaska 2027</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f0f4f8;
+    color: #1a1a2e;
+    padding: 0;
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ---- Side nav ---- */
+  .sidenav {
+    width: 200px;
+    flex-shrink: 0;
+    background: #0d3b66;
+    color: white;
+    padding: 24px 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+  .sidenav-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #a8c4e0;
+    padding: 0 16px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    margin-bottom: 12px;
+  }
+  .sidenav a {
+    display: block;
+    padding: 7px 16px;
+    color: #cde0f2;
+    text-decoration: none;
+    font-size: 0.82rem;
+    border-left: 3px solid transparent;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .sidenav a:hover, .sidenav a.active {
+    background: rgba(255,255,255,0.1);
+    border-left-color: #7ab8f5;
+    color: white;
+  }
+  .sidenav .back-link {
+    font-size: 0.78rem;
+    color: #a8c4e0;
+    padding: 0 16px 14px;
+    display: block;
+    text-decoration: none;
+  }
+  .sidenav .back-link:hover { color: white; }
+  .sidenav .nav-section {
+    padding: 10px 16px 4px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #7ab8f5;
+    margin-top: 8px;
+  }
+
+  /* ---- Main content ---- */
+  .main {
+    flex: 1;
+    padding: 28px 32px;
+    max-width: 960px;
+  }
+  h1 { font-size: 1.6rem; color: #0d3b66; margin-bottom: 4px; }
+  .subtitle { color: #555; font-size: 0.9rem; margin-bottom: 20px; }
+
+  .note {
+    background: #fff8e1;
+    border-left: 4px solid #f9a825;
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-size: 0.82rem;
+    color: #5d4037;
+    margin-bottom: 28px;
+    line-height: 1.5;
+  }
+
+  /* ---- Destination sections ---- */
+  .dest-section {
+    margin-bottom: 48px;
+  }
+  .dest-header {
+    background: #0d3b66;
+    color: white;
+    border-radius: 10px 10px 0 0;
+    padding: 14px 20px;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .dest-header h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+  }
+  .dest-header .dest-meta {
+    font-size: 0.8rem;
+    color: #a8c4e0;
+  }
+  .dest-body {
+    background: white;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    overflow: hidden;
+  }
+  .dest-intro {
+    padding: 12px 20px;
+    font-size: 0.82rem;
+    color: #555;
+    border-bottom: 1px solid #eef0f3;
+    line-height: 1.5;
+  }
+
+  /* ---- Tour table ---- */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.83rem;
+  }
+  thead tr { background: #f0f4f8; }
+  th {
+    padding: 9px 14px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #0d3b66;
+    border-bottom: 2px solid #dde3ec;
+    white-space: nowrap;
+  }
+  td {
+    padding: 9px 14px;
+    border-bottom: 1px solid #eef0f3;
+    vertical-align: top;
+    line-height: 1.45;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #f8fafd; }
+
+  td.tour-name a {
+    color: #1a5276;
+    text-decoration: none;
+    font-weight: 500;
+    border-bottom: 1px solid #b0c4de;
+  }
+  td.tour-name a:hover { color: #0d3b66; border-color: #0d3b66; }
+
+  td.price-col {
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .price-low  { color: #1b5e20; }
+  .price-med  { color: #e65100; }
+  .price-high { color: #c62828; }
+
+  .tag {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .tag-wildlife { background: #e8f5e9; color: #2e7d32; }
+  .tag-culture  { background: #e8eaf6; color: #3949ab; }
+  .tag-adventure{ background: #fff3e0; color: #e65100; }
+  .tag-food     { background: #fce4ec; color: #c2185b; }
+  .tag-scenic   { background: #e0f7fa; color: #00838f; }
+  .tag-history  { background: #f3e5f5; color: #7b1fa2; }
+
+  @media (max-width: 780px) {
+    body { flex-direction: column; }
+    .sidenav { width: 100%; height: auto; position: static; padding: 12px 0; }
+    .main { padding: 16px; max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Side nav -->
+<nav class="sidenav">
+  <div class="sidenav-title">⚓ Alaska 2027</div>
+  <a class="back-link" href="index.html">← Back to cruise list</a>
+
+  <div class="nav-section">Port Excursions</div>
+  <a href="#juneau">Juneau, AK</a>
+  <a href="#skagway">Skagway, AK</a>
+  <a href="#ketchikan">Ketchikan, AK</a>
+  <a href="#icy-strait-point">Icy Strait Point, AK</a>
+  <a href="#victoria">Victoria, BC</a>
+</nav>
+
+<!-- Main content -->
+<div class="main">
+  <h1>🗺️ Shore Excursions — ≤ $200 per Adult</h1>
+  <p class="subtitle">Tours &amp; excursions at each Alaska port stop, sourced from Viator/TripAdvisor · Prices as of July 2026</p>
+
+  <div class="note">
+    <strong>Prices:</strong> All prices are in USD, per adult, and are starting/minimum prices — verify current pricing before booking as they fluctuate. Links go directly to Viator (a TripAdvisor company). <strong>Glacier Bay NP, Hubbard Glacier, Dawes Glacier, College Fjord, and Tracy Arm Fjord</strong> are scenic cruising days with no port stop, so no shore excursions apply.
+  </div>
+
+  <!-- ============================= JUNEAU ============================= -->
+  <div class="dest-section" id="juneau">
+    <div class="dest-header">
+      <h2>Juneau, AK</h2>
+      <span class="dest-meta">Alaska's capital city · Whale watching, glaciers, hiking</span>
+    </div>
+    <div class="dest-body">
+      <div class="dest-intro">
+        Juneau sits at the base of forested mountains with the Mendenhall Glacier just 12 miles from downtown. It's one of the best ports in Alaska for whale watching — humpbacks feed in the waters of Stephens Passage through the summer. The Mt. Roberts Tramway and Mendenhall Glacier are top self-guided options.
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:44%">Tour / Activity</th>
+            <th>Type</th>
+            <th>Price/Adult</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Juneau/Juneau-Ghost-Walk-Explore-Alaskas-Haunted-Capital/d941-5589041P3" target="_blank">Juneau Ghost Walk ↗</a></td>
+            <td><span class="tag tag-history">History</span></td>
+            <td class="price-col price-low">$35</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/Juneau-attractions/Mendenhall-Glacier/d941-a2699" target="_blank">Mendenhall Glacier (admission) ↗</a></td>
+            <td><span class="tag tag-scenic">Scenic</span></td>
+            <td class="price-col price-low">$79</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Juneau/Historical-Walking-Tour-of-Abandoned-Gold-Rush-Era-City-with-AR/d941-406838P1" target="_blank">Historical Walking Tour — Abandoned Gold Rush City ↗</a></td>
+            <td><span class="tag tag-history">History</span></td>
+            <td class="price-col price-low">$119</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/Juneau-attractions/Mt-Roberts-Tramway-Goldbelt-Tram/d941-a3931" target="_blank">Mt. Roberts Tramway ↗</a></td>
+            <td><span class="tag tag-scenic">Scenic</span></td>
+            <td class="price-col price-low">$125</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Juneau/Juneau-Whale-Watch-Adventure/d941-5584728P2" target="_blank">Juneau Whale Watch Adventure ↗</a></td>
+            <td><span class="tag tag-wildlife">Wildlife</span></td>
+            <td class="price-col price-med">$150</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Juneau/Juneau-Whale-Watching-Tour/d941-5857P23" target="_blank">Ultimate Juneau Whale Watch ↗</a></td>
+            <td><span class="tag tag-wildlife">Wildlife</span></td>
+            <td class="price-col price-med">$156</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Juneau/Superior-Whale-Watching-3hrs-on-the-water/d941-60598P2" target="_blank">Alaska Whale Watching Cruise — 3 Hours on the Water ↗</a></td>
+            <td><span class="tag tag-wildlife">Wildlife</span></td>
+            <td class="price-col price-med">$159</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Juneau/Segway-Alaska-Coastal-Rainforest-Trek/d941-217546P2" target="_blank">Segway Coastal Scenic Rainforest Tour ↗</a></td>
+            <td><span class="tag tag-adventure">Adventure</span></td>
+            <td class="price-col price-med">$165</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Juneau/Segway-Alaska-Alpine-Wilderness-Trail-Ride/d941-217546P3" target="_blank">Juneau Alpine Segway Wilderness Trail Adventure ↗</a></td>
+            <td><span class="tag tag-adventure">Adventure</span></td>
+            <td class="price-col price-med">$180</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Juneau/Whale-Watching-with-a-Peek-at-the-Mendenhall-Glacier/d941-466119P4" target="_blank">Whale Watching with a Peek at Mendenhall Glacier ↗</a></td>
+            <td><span class="tag tag-wildlife">Wildlife</span></td>
+            <td class="price-col price-med">$185</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Juneau/Whale-Tours-in-Juneau-Alaska/d941-331813P1" target="_blank">3.5-Hour Crowd-Skipping Whale Tour ↗</a></td>
+            <td><span class="tag tag-wildlife">Wildlife</span></td>
+            <td class="price-col price-med">$189</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Juneau/Juneau-Whale-Watching-Adventure/d941-5474WHALE" target="_blank">Juneau Whale Watching Adventure ↗</a></td>
+            <td><span class="tag tag-wildlife">Wildlife</span></td>
+            <td class="price-col price-med">$189</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Juneau/Juneau-Lighthouse-Tours-Whale-watching-and-Lighthouse-Combo/d941-5339P2" target="_blank">Lighthouse Tour — Whale Watching &amp; Lighthouse Combo ↗</a></td>
+            <td><span class="tag tag-wildlife">Wildlife</span></td>
+            <td class="price-col price-high">$199</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ============================= SKAGWAY ============================= -->
+  <div class="dest-section" id="skagway">
+    <div class="dest-header">
+      <h2>Skagway, AK</h2>
+      <span class="dest-meta">Gold Rush history · White Pass · Yukon border country</span>
+    </div>
+    <div class="dest-body">
+      <div class="dest-intro">
+        Skagway was the main gateway for the Klondike Gold Rush of 1898. Today its preserved boardwalk downtown and the dramatic White Pass summit drive (2,900 ft above sea level) are the main draws. The Yukon suspension bridge and sled dog experiences are popular additions. Many options are bus tours into the mountains.
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:44%">Tour / Activity</th>
+            <th>Type</th>
+            <th>Price/Adult</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Skagway/Skagway-in-90-Minutes-The-Must-See-Highlights-Tour/d943-5647149P3" target="_blank">Skagway in 90 Minutes — City Highlights ↗</a></td>
+            <td><span class="tag tag-history">History</span></td>
+            <td class="price-col price-low">$56</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Skagway/White-Pass-Deluxe-Tour-from-Skagway/d943-10649P1" target="_blank">White Pass Deluxe Tour ↗</a></td>
+            <td><span class="tag tag-scenic">Scenic</span></td>
+            <td class="price-col price-low">$70</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Skagway/Summit-Tour-in-Skagway-8-30-AM/d943-10649P18" target="_blank">Summit Tour in Skagway ↗</a></td>
+            <td><span class="tag tag-scenic">Scenic</span></td>
+            <td class="price-col price-low">$70</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Skagway/Skagway-City-and-Summit-Tour/d943-377197P8" target="_blank">Skagway City and Summit Tour ↗</a></td>
+            <td><span class="tag tag-scenic">Scenic</span></td>
+            <td class="price-col price-low">$76</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Skagway/Skagway-Shore-Excursion-White-Pass-Summit-and-Skagway-City-Tour/d943-5338PRTSGYCITY" target="_blank">White Pass Summit &amp; Skagway City Tour ↗</a></td>
+            <td><span class="tag tag-scenic">Scenic</span></td>
+            <td class="price-col price-low">$77</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Skagway/Scenic-Waterfall-Tour/d943-29957P12" target="_blank">Skagway Waterfall Tour ↗</a></td>
+            <td><span class="tag tag-scenic">Scenic</span></td>
+            <td class="price-col price-low">$89</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Skagway/Skagway-Shore-Excursion-Scenic-River-Float-Tour/d943-5336PRTSGYFLOAT" target="_blank">Scenic River Float Tour ↗</a></td>
+            <td><span class="tag tag-adventure">Adventure</span></td>
+            <td class="price-col price-low">$102</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Skagway/Skagways-Hidden-Gem/d943-37841P14" target="_blank">Skagway's Hidden Gem ↗</a></td>
+            <td><span class="tag tag-scenic">Scenic</span></td>
+            <td class="price-col price-low">$107</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Skagway/Sled-dog-puppies-Summit-and-Yukon-Sites/d943-377197P3" target="_blank">Yukon Husky Puppy Play Time &amp; Summit Tour ↗</a></td>
+            <td><span class="tag tag-wildlife">Wildlife</span></td>
+            <td class="price-col price-low">$121</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Skagway/White-Pass-Summit-and-Yukon-Suspension-Bridge-Tour/d943-377197P2" target="_blank">Summit Experience &amp; Yukon Suspension Bridge Tour ↗</a></td>
+            <td><span class="tag tag-scenic">Scenic</span></td>
+            <td class="price-col price-med">$132</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Skagway/White-Pass-Summit-and-Yukon-Suspension-Bridge-Tour/d943-37841P10" target="_blank">Yukon Suspension Bridge and Summit Tour ↗</a></td>
+            <td><span class="tag tag-scenic">Scenic</span></td>
+            <td class="price-col price-med">$136</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Skagway/Skagway-Shore-Excursion-Half-Day-Tour-to-the-Yukon-Border/d943-5338PRTSGTHALF" target="_blank">Half-Day Tour to the Yukon Border &amp; Suspension Bridge ↗</a></td>
+            <td><span class="tag tag-scenic">Scenic</span></td>
+            <td class="price-col price-med">$139</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Skagway/Mushers-Camp-and-Smore-Roasting-Experience/d943-62390P7" target="_blank">Musher's Camp &amp; S'More Roasting ↗</a></td>
+            <td><span class="tag tag-culture">Culture</span></td>
+            <td class="price-col price-med">$157</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Skagway/Bridge-Puppies-and-Summit-Triple-Combo/d943-377197P4" target="_blank">Bridge, Puppies &amp; Summit Triple Combo ↗</a></td>
+            <td><span class="tag tag-adventure">Adventure</span></td>
+            <td class="price-col price-med">$165</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Skagway/Yukon-Double-Up-Emerald-Lake-Puppies-and-Yukon-Susp-Bridge/d943-377197P6" target="_blank">Wild Adventure Yukon Tour ↗</a></td>
+            <td><span class="tag tag-adventure">Adventure</span></td>
+            <td class="price-col price-med">$169</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Skagway/Skagway-Shore-Excursion-Full-Day-Tour-of-the-Yukon/d943-5338PRTSGYFULL" target="_blank">Full-Day Tour of the Yukon ↗</a></td>
+            <td><span class="tag tag-scenic">Scenic</span></td>
+            <td class="price-col price-med">$173</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Skagway/Yukon-Dogs-and-Gold/d943-10649P2" target="_blank">Sled Dog Adventure &amp; Pan for Gold in the Yukon ↗</a></td>
+            <td><span class="tag tag-adventure">Adventure</span></td>
+            <td class="price-col price-med">$175</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Skagway/Small-Group-Skagway-White-Pass-and-Gold-Rush-Adventure/d943-9444P115" target="_blank">Small Group White Pass &amp; Gold Rush Adventure ↗</a></td>
+            <td><span class="tag tag-history">History</span></td>
+            <td class="price-col price-med">$181</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Skagway/Ocean-Raft-Wildlife-Adventure/d943-112824P1" target="_blank">Ocean Raft Alaska — Wildlife Adventure ↗</a></td>
+            <td><span class="tag tag-wildlife">Wildlife</span></td>
+            <td class="price-col price-high">$190</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Skagway/Summer-Sled-Dogs-and-White-Pass-Summit-Tour/d943-377197P1" target="_blank">Summer Sled Dog Remote Yukon Camp &amp; Summit Tour ↗</a></td>
+            <td><span class="tag tag-adventure">Adventure</span></td>
+            <td class="price-col price-high">$194</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ============================= KETCHIKAN ============================= -->
+  <div class="dest-section" id="ketchikan">
+    <div class="dest-header">
+      <h2>Ketchikan, AK</h2>
+      <span class="dest-meta">Salmon capital · Totem poles · Tongass rainforest</span>
+    </div>
+    <div class="dest-body">
+      <div class="dest-intro">
+        Ketchikan is Alaska's first port of call heading north, and often the last heading south. It's known for the highest concentration of totem poles in the world, the Lumberjack Show, and the Tongass National Forest — the largest national forest in the US. The town sits on a narrow shelf between the mountains and the sea.
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:44%">Tour / Activity</th>
+            <th>Type</th>
+            <th>Price/Adult</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Ketchikan/Ketchikan-Duck-Tour/d942-9893P1" target="_blank">Ketchikan Duck Tour ↗</a></td>
+            <td><span class="tag tag-scenic">Scenic</span></td>
+            <td class="price-col price-low">$79</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Ketchikan/Wildlife-culture-Island-excursion-with-a-local/d942-349745P2" target="_blank">2-Hour Wildlife &amp; Culture Small Van Excursion ↗</a></td>
+            <td><span class="tag tag-wildlife">Wildlife</span></td>
+            <td class="price-col price-low">$80</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Ketchikan/Lumberjack-Show-and-Axe-Throw-Challenge/d942-5493500P3" target="_blank">Lumberjack Show and Axe Throw Challenge ↗</a></td>
+            <td><span class="tag tag-culture">Culture</span></td>
+            <td class="price-col price-low">$80</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Ketchikan/Cable-Car-Trolley/d942-72393P3" target="_blank">Totems, City &amp; Wildlife by Cable Car Trolley ↗</a></td>
+            <td><span class="tag tag-culture">Culture</span></td>
+            <td class="price-col price-low">$85</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Ketchikan/Ride-the-Tongass-Trolley/d942-237170P2" target="_blank">2.5-Hour Tour on the Tongass Trolley ↗</a></td>
+            <td><span class="tag tag-scenic">Scenic</span></td>
+            <td class="price-col price-low">$85</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Ketchikan/Ketchikan-All-In-One/d942-69774P1" target="_blank">Ketchikan All In One ↗</a></td>
+            <td><span class="tag tag-scenic">Scenic</span></td>
+            <td class="price-col price-low">$94</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Ketchikan/Guided-tour-of-Ketchikans-top-attractions-with-local-guide/d942-357503P3" target="_blank">Over the Top Tours — Wildlife &amp; Waterfall ↗</a></td>
+            <td><span class="tag tag-wildlife">Wildlife</span></td>
+            <td class="price-col price-low">$100</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Ketchikan/Alaska-Crab-Feast/d942-5493500P2" target="_blank">Alaska Crab Feast ↗</a></td>
+            <td><span class="tag tag-food">Food</span></td>
+            <td class="price-col price-low">$109</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/Ketchikan-attractions/Alaska-Rainforest-Sanctuary/d942-a17042" target="_blank">Alaska Rainforest Sanctuary ↗</a></td>
+            <td><span class="tag tag-wildlife">Wildlife</span></td>
+            <td class="price-col price-low">$113</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Ketchikan/Wildlife-Waterfall-Tours/d942-434430P2" target="_blank">Alaska Wildlife Waterfall Tours ↗</a></td>
+            <td><span class="tag tag-wildlife">Wildlife</span></td>
+            <td class="price-col price-low">$117</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Ketchikan/Ketchikan-Rainforest-Adventure-Nature-and-Wildlife-Tour/d942-5620011P1" target="_blank">Ketchikan Rainforest Adventure — Nature &amp; Wildlife Tour ↗</a></td>
+            <td><span class="tag tag-wildlife">Wildlife</span></td>
+            <td class="price-col price-low">$119</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Ketchikan/3-Hour-Rainforest-Beach-and-Wildlife-Walk-WildView-Alaska-Tours/d942-5566981P3" target="_blank">3-Hour Rainforest, Beach &amp; Wildlife Walk ↗</a></td>
+            <td><span class="tag tag-wildlife">Wildlife</span></td>
+            <td class="price-col price-med">$130</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Ketchikan/Photo-Safari-in-Ketchikan-Alaska-Spend-3-hrs-off-the-tourist-beaten-path/d942-163969P1" target="_blank">Off the Beaten Path Photo Safari ↗</a></td>
+            <td><span class="tag tag-scenic">Scenic</span></td>
+            <td class="price-col price-med">$134</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Ketchikan/Ketchikan-Wildlife-Safari-and-Sightseeing-Tour/d942-5535494P1" target="_blank">Alaska Wildlife Safari &amp; Sightseeing Tour ↗</a></td>
+            <td><span class="tag tag-wildlife">Wildlife</span></td>
+            <td class="price-col price-med">$137</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Ketchikan/Lumberjack-Show-and-Harbor-Haus-Crab-Feast/d942-5493500P1" target="_blank">Lumberjack Show and Harbor Haus Crab Feast ↗</a></td>
+            <td><span class="tag tag-food">Food</span></td>
+            <td class="price-col price-med">$149</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Ketchikan/Ketchikan-Kayak-Eco-Tour/d942-26034P1" target="_blank">Ketchikan Kayak Eco-Tour ↗</a></td>
+            <td><span class="tag tag-adventure">Adventure</span></td>
+            <td class="price-col price-med">$161</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Ketchikan/Electric-Bike-and-Hike-Guided-Eco-Tour/d942-26034P3" target="_blank">Ketchikan Electric Bike and Rainforest Hike Ecotour ↗</a></td>
+            <td><span class="tag tag-adventure">Adventure</span></td>
+            <td class="price-col price-med">$161</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Ketchikan/Whale-Watching-and-Wildlife-Viewing-Excursion/d942-157420P1" target="_blank">Wildlife Viewing, Sightseeing &amp; Whale Watching Quest ↗</a></td>
+            <td><span class="tag tag-wildlife">Wildlife</span></td>
+            <td class="price-col price-med">$178</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Ketchikan/Alaskan-Lodge-Adventure-and-Seafeast/d942-295647P1" target="_blank">Alaskan Lodge Adventure and Seafeast ↗</a></td>
+            <td><span class="tag tag-food">Food</span></td>
+            <td class="price-col price-high">$196</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ============================= ICY STRAIT POINT ============================= -->
+  <div class="dest-section" id="icy-strait-point">
+    <div class="dest-header">
+      <h2>Icy Strait Point, AK</h2>
+      <span class="dest-meta">Hoonah · Brown bears · Kayaking · Tlingit culture</span>
+    </div>
+    <div class="dest-body">
+      <div class="dest-intro">
+        Icy Strait Point is a private cruise destination owned by the Huna Tlingit people of Hoonah. It sits on Chichagof Island — one of the highest concentrations of brown bears on earth. Whale watching is popular here but most boat tours run $200+ per person; the options below offer great value with land-based and cultural experiences.
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:44%">Tour / Activity</th>
+            <th>Type</th>
+            <th>Price/Adult</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Hoonah/Alaska-Nature-Sound-Immersion-and-Tea-at-Hoonah-Matata-Lodge/d26215-5667882P1" target="_blank">Alaska Nature Sound Immersion &amp; Tea at Hoonah Matata Lodge ↗</a></td>
+            <td><span class="tag tag-culture">Culture</span></td>
+            <td class="price-col price-low">$124</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Hoonah/2-Hour-Chichagof-Island-Guided-Driving-Tour/d26215-5560920P3" target="_blank">2-Hour Chichagof Island Guided Driving Tour — Tlingit Native Guides ↗</a></td>
+            <td><span class="tag tag-culture">Culture</span></td>
+            <td class="price-col price-low">$125</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Hoonah/Chichagof-Island-Tour-Brown-Bear-Search/d26215-14707P3" target="_blank">Chichagof Island Tour: Brown Bear Search ↗</a></td>
+            <td><span class="tag tag-wildlife">Wildlife</span></td>
+            <td class="price-col price-med">$164</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Hoonah/kayak-tours/d26215-166611P1" target="_blank">Kayak Tours — Hoonah &amp; Long Island Wildlife Paddle ↗</a></td>
+            <td><span class="tag tag-adventure">Adventure</span></td>
+            <td class="price-col price-med">$180</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Hoonah/Icy-Strait-Village-Tour-and-Crab-Feast/d26215-453418P2" target="_blank">Icy Strait Village Tour and Crab Feast ↗</a></td>
+            <td><span class="tag tag-food">Food</span></td>
+            <td class="price-col price-high">$195</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ============================= VICTORIA ============================= -->
+  <div class="dest-section" id="victoria">
+    <div class="dest-header">
+      <h2>Victoria, BC</h2>
+      <span class="dest-meta">Canada's City of Gardens · Butchart Gardens · Whale watching</span>
+    </div>
+    <div class="dest-body">
+      <div class="dest-intro">
+        Victoria is the final port on many Alaska Inside Passage round trips departing from Seattle. The city is known for its English-influenced architecture, the world-famous Butchart Gardens (12 miles from the cruise terminal), vibrant Inner Harbour, and excellent whale watching. Ships typically dock at Ogden Point, a 20-minute walk from downtown. Note: prices are in USD.
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:44%">Tour / Activity</th>
+            <th>Type</th>
+            <th>Price/Adult</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Victoria/Royal-BC-Museum/d617-5621P1" target="_blank">Royal BC Museum — Admission Ticket ↗</a></td>
+            <td><span class="tag tag-culture">Culture</span></td>
+            <td class="price-col price-low">$17</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Victoria/Victoria-Butterfly-Gardens/d617-46121P1" target="_blank">Victoria Butterfly Gardens Ticket ↗</a></td>
+            <td><span class="tag tag-scenic">Scenic</span></td>
+            <td class="price-col price-low">$16</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Victoria/Ghostly-Walking-Tour-in-Victoria/d617-36496P1" target="_blank">Ghostly Walking Tour in Victoria ↗</a></td>
+            <td><span class="tag tag-history">History</span></td>
+            <td class="price-col price-low">$18</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Victoria/Malahat-SkyWalk-General-Admission-Tickets/d617-414684P1" target="_blank">Malahat SkyWalk Tickets ↗</a></td>
+            <td><span class="tag tag-scenic">Scenic</span></td>
+            <td class="price-col price-low">$34</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Victoria/Butchart-Gardens-Tour-from-Victoria/d617-33902A" target="_blank">Butchart Gardens Express Shuttle from Downtown Victoria ↗</a><br><span style="font-size:0.75rem;color:#888">Shuttle only — garden admission is additional</span></td>
+            <td><span class="tag tag-scenic">Scenic</span></td>
+            <td class="price-col price-low">$46</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Victoria/Hop-On-Half-Day-Sightseeing-Victoria/d617-3390P19" target="_blank">24-Hour Hop-On Hop-Off Double Decker City Tour ↗</a></td>
+            <td><span class="tag tag-scenic">Scenic</span></td>
+            <td class="price-col price-low">$54</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Victoria/Pickle-Pub-Crawl/d617-155810P3" target="_blank">Pickle Pub Crawl — Inner Harbour Ferry Tour ↗</a></td>
+            <td><span class="tag tag-food">Food</span></td>
+            <td class="price-col price-low">$54</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Vancouver-Island/Iconic-Dash-1-Hour-City-Tour/d30423-5636597P2" target="_blank">The Iconic Dash — Top-Rated Pedicab Tour (1 hr) ↗</a></td>
+            <td><span class="tag tag-scenic">Scenic</span></td>
+            <td class="price-col price-low">$56</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Victoria/BC-Sights-and-Bites/d617-155810P1" target="_blank">Victoria Bites &amp; Sights — Walking Tour plus Ferry ↗</a></td>
+            <td><span class="tag tag-food">Food</span></td>
+            <td class="price-col price-low">$74</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Victoria/Guided-Food-and-History-Tour/d617-45346P1" target="_blank">Victoria Guided Food &amp; History Tour ↗</a></td>
+            <td><span class="tag tag-food">Food</span></td>
+            <td class="price-col price-low">$86</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Victoria/Fort-Street-Food-Walking-Tour-in-Victoria/d617-7021STREETFOOD" target="_blank">Downtown Victoria Food &amp; City Tour ↗</a></td>
+            <td><span class="tag tag-food">Food</span></td>
+            <td class="price-col price-low">$93</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Victoria/Small-Group-Zipline-Adventure/d617-5401ZIP" target="_blank">Victoria Zipline Adventure Tour ↗</a></td>
+            <td><span class="tag tag-adventure">Adventure</span></td>
+            <td class="price-col price-low">$93</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Victoria/Historic-Downtown-Victoria-Food-Tour/d617-7021P7" target="_blank">Hip &amp; Hidden Chinatown + Old Town Food Tour ↗</a></td>
+            <td><span class="tag tag-food">Food</span></td>
+            <td class="price-col price-low">$96</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Vancouver-Island/2hr-Scenic-Victoria-Pedicab-Tour-Cruise-Ship-or-Empress-Pickup/d30423-5636597P3" target="_blank">Scenic Victoria Pedicab Tour (2 hrs) ↗</a></td>
+            <td><span class="tag tag-scenic">Scenic</span></td>
+            <td class="price-col price-med">$104</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Victoria/Shuttle-to-the-Butchart-Gardens/d617-24251P3" target="_blank">COMBO Victoria City Tour &amp; Butchart Gardens (incl. entry) ↗</a></td>
+            <td><span class="tag tag-scenic">Scenic</span></td>
+            <td class="price-col price-med">$106</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Victoria/Victoria-Highlights-Private-Pedicab-Tour/d617-5582862P7" target="_blank">Victoria Highlights Private Pedicab Tour (2.5 hrs) ↗</a></td>
+            <td><span class="tag tag-scenic">Scenic</span></td>
+            <td class="price-col price-med">$109</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Victoria/Victoria-City-Tour-Butchart-Gardens/d617-31847P25" target="_blank">Victoria City &amp; Butchart Gardens Private Tour ↗</a></td>
+            <td><span class="tag tag-scenic">Scenic</span></td>
+            <td class="price-col price-med">$112</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Victoria/Victoria-Whale-Watch-Tour/d617-3530WHALE" target="_blank">Victoria Whale Watch Tour ↗</a></td>
+            <td><span class="tag tag-wildlife">Wildlife</span></td>
+            <td class="price-col price-med">$126</td>
+          </tr>
+          <tr>
+            <td class="tour-name"><a href="https://www.viator.com/tours/Victoria/Ocean-Magic-Whale-Watching-Adventure-in-Victoria/d617-5882P7" target="_blank">Victoria Half-Day Whale Watching Adventure (with free photos) ↗</a></td>
+            <td><span class="tag tag-wildlife">Wildlife</span></td>
+            <td class="price-col price-med">$161</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /.main -->
+
+<script>
+  // Highlight active nav link based on scroll position
+  const sections = document.querySelectorAll('.dest-section');
+  const navLinks = document.querySelectorAll('.sidenav a[href^="#"]');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(a => a.classList.remove('active'));
+        const active = document.querySelector(`.sidenav a[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { threshold: 0.3 });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
