@@ -228,6 +228,15 @@
   }
   a.book-link:hover { color: #1565c0; border-color: #1565c0; }
 
+  /* Destination links in itinerary text */
+  a.dest-link {
+    color: #0d6b3b;
+    text-decoration: none;
+    border-bottom: 1px dashed #6aab8a;
+    font-weight: 500;
+  }
+  a.dest-link:hover { color: #0a5230; border-color: #0a5230; }
+
   /* Hide button per row */
   .hide-btn {
     background: none;
@@ -912,17 +921,37 @@
     updateCount();
   }
 
+  // Port destinations that have an excursions page section
+  const EXCURSION_LINKS = {
+    'Juneau':          'alaska-excursions.html#juneau',
+    'Skagway':         'alaska-excursions.html#skagway',
+    'Ketchikan':       'alaska-excursions.html#ketchikan',
+    'Icy Strait Point':'alaska-excursions.html#icy-strait-point',
+    'Victoria':        'alaska-excursions.html#victoria',
+  };
+
+  function linkifyDestinations() {
+    const names = Object.keys(EXCURSION_LINKS).sort((a, b) => b.length - a.length);
+    const re = new RegExp(`(${names.map(n => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`, 'g');
+    document.querySelectorAll('.itin-ports').forEach(el => {
+      const plain = el.textContent;
+      el.dataset.plainText = plain;
+      el.innerHTML = plain.replace(re, m => `<a href="${EXCURSION_LINKS[m]}" class="dest-link" title="View ${m} excursions">${m}</a>`);
+      el.dataset.linkedHtml = el.innerHTML;
+    });
+  }
+
   function highlightDests(checked) {
     document.querySelectorAll('.itin-ports').forEach(el => {
-      let html = el.textContent;
+      const plain = el.dataset.plainText || el.textContent;
       if (checked.length === 0) {
-        el.innerHTML = html;
+        el.innerHTML = el.dataset.linkedHtml || plain;
         return;
       }
-      // escape for regex
+      // When filter is active, highlight on plain text (links temporarily removed for clean highlighting)
       const escaped = checked.map(d => d.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
       const re = new RegExp(`(${escaped.join('|')})`, 'gi');
-      el.innerHTML = html.replace(re, '<span class="itin-match">$1</span>');
+      el.innerHTML = plain.replace(re, '<span class="itin-match">$1</span>');
     });
   }
 
@@ -987,6 +1016,7 @@
 
   // ---- Init ----
   buildDestGrid();
+  linkifyDestinations();
   updateHiddenBtn();
   updateCount();
 </script>
